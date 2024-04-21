@@ -1,0 +1,21 @@
+{
+  "name": "table-diffusion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "prettier": "3.2.5"
+  },
+  "dependencies": {
+    "fastify": "^4.26.2",
+    "ws": "^8.16.0"
+  }
+}
