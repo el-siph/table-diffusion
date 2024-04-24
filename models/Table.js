@@ -1,5 +1,5 @@
-import Player from "./Player";
 import CardDeck from "./CardDeck";
+import Player from "./Player";
 
 /**
  * Represents a game room; literally a card table.
@@ -66,6 +66,10 @@ export default class Table {
 
   setCardDeck(newDeck) {
     this._cardDeck = newDeck;
+  }
+
+  get playerCount() {
+    return Object.keys(this._players).length;
   }
 
   assignDeckToPlayer(playerId, cards) {
