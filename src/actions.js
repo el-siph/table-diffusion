@@ -57,8 +57,8 @@ export const actions = {
   dealCards: "dealCards",
 
   /** Either joins or creates a Table.
-   * @requires payload with { tableId, playerId }
-   * @returns void
+   * @requires payload with { tableId, playerName }
+   * @returns {{}} object with generated tableId and playerId values.
    */
   joinTable: "joinTable",
 
