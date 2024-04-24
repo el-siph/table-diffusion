@@ -1,8 +1,16 @@
+import fastifyWS from "@fastify/websocket";
 import Fastify from "fastify";
 import Table from "./models/Table";
-import CardDeck from "./models/CardDeck";
-import fastifyWS from "@fastify/websocket";
 import { actions } from "./src/actions";
+import {
+  divideDeckForTable,
+  generateDeckForTable,
+  getTableById,
+  getTables,
+  initializeTables,
+  joinOrCreateTable,
+  shuffleDeckForTable,
+} from "./src/functions";
 
 const PORT = parseInt(process.env.PORT) ?? 8080;
 
@@ -11,9 +19,6 @@ const fastify = Fastify({
 });
 
 fastify.register(fastifyWS);
-
-/** Contains collective state of the application. */
-let tables;
 
 /* Sockets */
 fastify.register(async function (fastify) {
@@ -52,12 +57,12 @@ fastify.register(async function (fastify) {
 
         case actions.getTableState:
           /** @type Table */
-          const table = tables[payload.tableId];
+          const table = getTableById(payload.tableId);
           socket.send(JSON.stringify(table));
           break;
 
         case actions.getAllTables:
-          socket.send(JSON.stringify(tables));
+          socket.send(JSON.stringify(getTables()));
           break;
       }
     });
@@ -72,75 +77,6 @@ fastify.register(async function (fastify) {
   });
 });
 
-/* Functions */
-
-/** Updates a given Table with a tableId
- * @param {string} tableId
- * @param {Table} updatedTable
- */
-function updateTableById(tableId, updatedTable) {
-  const updatedTables = tables;
-  updatedTables[tableId] = updatedTable;
-  tables = updatedTables;
-}
-
-/**
- * @param {string} tableId - string identifier to join room (if exists)
- * @param {string} playerId - string indentifier to join room as player
- */
-function joinOrCreateTable(tableId, playerId) {
-  /** @type Table */
-  let updatedTable;
-
-  if (!tables[tableId]) {
-    tables[tableId] = new Table(tableId);
-  }
-  updatedTable = tables[tableId];
-
-  if (updatedTable.hasPlayer(playerId)) {
-    // emit username taken
-  } else {
-    updatedTable.addPlayerById(playerId);
-  }
-
-  updateTableById(tableId, updatedTable);
-}
-
-/** Generates a new CardDeck for an existing Table.
- * @param {string} tableId - unique identifier for existing Table.
- */
-function generateDeckForTable(tableId) {
-  /** @type Table */
-  const table = tables[tableId];
-
-  if (table) {
-    table.setCardDeck(CardDeck.generate());
-  }
-
-  updateTableById(tableId, table);
-}
-
-/** Shuffles the current CardDeck for an existing Table.
- * @param {string} tableId
- */
-function shuffleDeckForTable(tableId) {
-  /** @type Table */
-  const table = tables[tableId];
-  table.cardDeck.shuffle();
-
-  updateTableById(tableId, table);
-}
-
-function divideDeckForTable(tableId) {
-  /** @type Table */
-  const table = tables[tableId];
-  const playerDecks = table.cardDeck.divide(table.players.length);
-  table.players.map((player, index) => {
-    player.setDeck(playerDecks[index]);
-  });
-  updateTableById(tableId, table);
-}
-
 /* Routes */
 
 fastify.get("/hello", (request, response) => {
@@ -153,5 +89,5 @@ fastify.listen({ port: PORT }, (error, address) => {
     process.exit(1);
   }
 
-  tables = {};
+  initializeTables();
 });
