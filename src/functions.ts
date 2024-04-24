@@ -2,13 +2,13 @@ import CardDeck from "./models/CardDeck";
 import Table from "./models/Table";
 
 /** Main Tables Object; Contains collective state of the application. */
-let tables;
+let tables: { [tableId: string]: Table };
 
 /** Updates a given Table with a tableId.
- * @param {string} tableId
- * @param {Table} updatedTable
+ * @param tableId
+ * @param updatedTable
  */
-function updateTableById(tableId, updatedTable) {
+function updateTableById(tableId: string, updatedTable: Table) {
   const updatedTables = tables;
   updatedTables[tableId] = updatedTable;
   return updatedTable;
@@ -20,28 +20,31 @@ export function initializeTables() {
 }
 
 /** Gets the current state of the Tables object.
- * @returns {{} | undefined} tables - state of the application if initialized, otherwise undefined.
+ * @returns {} tables - state of the application if initialized, otherwise undefined.
  */
-export function getTables() {
+export function getTables(): {} | undefined {
   return tables;
 }
 
 /** Gets the current state of a specific Table, if present.
- * @param {string} tableId
- * @returns {Table | undefined} matching Table, otherwise undefined.
+ * @param tableId
+ * @returns matching Table, otherwise undefined.
  */
-export function getTableById(tableId) {
+export function getTableById(tableId: string): Table | undefined {
   return tables[tableId];
 }
 
 /**
- * @param {string} tableId - string identifier to join room (if exists)
- * @param {string} playerId - generated string indentifier to join room as player
- * @param {string} playerName - chosen string indentifier
+ * @param tableId - string identifier to join room (if exists)
+ * @param playerId - generated string indentifier to join room as player
+ * @param playerName - chosen string indentifier
  */
-export function joinOrCreateTable(tableId, playerId, playerName) {
-  /** @type Table */
-  let updatedTable;
+export function joinOrCreateTable(
+  tableId: string,
+  playerId: string,
+  playerName: string,
+) {
+  let updatedTable: Table;
 
   if (!tables[tableId]) {
     tables[tableId] = new Table(tableId);
@@ -60,9 +63,8 @@ export function joinOrCreateTable(tableId, playerId, playerName) {
 /** Generates a new CardDeck for an existing Table.
  * @param {string} tableId - unique identifier for existing Table.
  */
-export function generateDeckForTable(tableId) {
-  /** @type Table */
-  const table = tables[tableId];
+export function generateDeckForTable(tableId: string) {
+  const table: Table = tables[tableId];
 
   if (table) {
     table.setCardDeck(CardDeck.generate());
@@ -72,27 +74,24 @@ export function generateDeckForTable(tableId) {
 }
 
 /** Shuffles the current CardDeck for an existing Table.
- * @param {string} tableId
+ * @param tableId
  */
-export function shuffleDeckForTable(tableId) {
-  /** @type Table */
-  const table = tables[tableId];
+export function shuffleDeckForTable(tableId: string) {
+  const table: Table = tables[tableId];
   table.cardDeck.shuffle();
 
   return updateTableById(tableId, table);
 }
 
 /** Divides the specified Table's CardDeck into equal CardDecks for each Player.
- * @param {string} tableId
+ * @param tableId
  */
-export function divideDeckForTable(tableId) {
-  /** @type Table */
-  const table = tables[tableId];
+export function divideDeckForTable(tableId: string) {
+  const table: Table = tables[tableId];
   const dividedDecks = table.cardDeck.divide(table.playerCount);
   Object.keys(table.players).map((key, index) => {
-    console.log("dividedDecks", dividedDecks);
     const newDeck = new CardDeck(dividedDecks[index]);
-    table._players[key].setDeck(newDeck);
+    table.players[key].setDeck(newDeck);
   });
   return updateTableById(tableId, table);
 }

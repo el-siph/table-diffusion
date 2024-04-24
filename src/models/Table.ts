@@ -1,16 +1,26 @@
 import CardDeck from "./CardDeck";
 import Player from "./Player";
+import type PlayingCard from "./PlayingCard";
+
+interface PlayersTable {
+  [playerId: string]: Player;
+}
 
 /**
  * Represents a game room; literally a card table.
  */
 export default class Table {
+  private _tableId: string;
+  private _ruleset: string;
+  private _players: PlayersTable;
+  private _cardDeck: CardDeck;
+
   /**
    * @constructor
-   * @param {string} tableId - unique string identifier for table.
-   * @param {string} ruleset - listed ruleset for the game being played.
+   * @param tableId - unique string identifier for table.
+   * @param ruleset - listed ruleset for the game being played.
    */
-  constructor(tableId, ruleset = "ratscrew") {
+  constructor(tableId: string, ruleset: string = "ratscrew") {
     this._tableId = tableId;
     this._ruleset = ruleset;
     this._players = {};
@@ -18,10 +28,10 @@ export default class Table {
   }
 
   /** Adds a Player to this Table, provided their ID is not taken.
-   * @param {string} playerId - unique string identifier for Player object to be added.
-   * @param {string} playerName - chosen string indentifier to join room as player
+   * @param playerId - unique string identifier for Player object to be added.
+   * @param playerName - chosen string indentifier to join room as player
    */
-  addPlayerById(playerId, playerName) {
+  addPlayerById(playerId: string, playerName: string) {
     if (this._players[playerId]) {
       // do nothing; player already exists
     } else {
@@ -32,9 +42,9 @@ export default class Table {
 
   /** Returns if a given playerId is found in the Players list.
    * @param playerId
-   * @returns {boolean | undefined} Player is found, undefined otherwise.
+   * @returns Player is found, undefined otherwise.
    */
-  hasPlayer(playerId) {
+  hasPlayer(playerId: string): boolean {
     Object.keys(this._players).map((key) => {
       if (key === playerId) {
         return true;
@@ -44,17 +54,25 @@ export default class Table {
   }
 
   /** Updates the existing player  */
-  updatePlayerById(playerId, updatedPlayer) {
+  updatePlayerById(playerId: string, updatedPlayer: Player) {
     if (this._players[playerId]) {
       this._players[playerId] = updatedPlayer;
     }
   }
 
+  get tableId() {
+    return this._tableId;
+  }
+
+  get ruleset() {
+    return this._ruleset;
+  }
+
   /** Updates the list of Players.
-   * @param {Player[]} players
+   * @param players
    */
-  setPlayers(players) {
-    this._players = structuredClone(players);
+  setPlayers(players: { [playerId: string]: Player }) {
+    this._players = players;
   }
 
   get players() {
@@ -65,7 +83,7 @@ export default class Table {
     return this._cardDeck;
   }
 
-  setCardDeck(newDeck) {
+  setCardDeck(newDeck: CardDeck) {
     this._cardDeck = newDeck;
   }
 
@@ -73,8 +91,7 @@ export default class Table {
     return Object.keys(this._players).length;
   }
 
-  assignDeckToPlayer(playerId, cards) {
-    /** @type {Player} */
+  assignDeckToPlayer(playerId: string, cards: PlayingCard[]) {
     const player = this._players[playerId];
     player.setDeck(new CardDeck(cards));
     this.updatePlayerById(playerId, player);

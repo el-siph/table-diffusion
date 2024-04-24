@@ -1,7 +1,6 @@
 import fastifyWS from "@fastify/websocket";
 import Fastify from "fastify";
-import Table from "./src/models/Table";
-import { actions } from "./src/actions";
+import { Actions } from "./src/actions";
 import {
   divideDeckForTable,
   generateDeckForTable,
@@ -11,8 +10,9 @@ import {
   joinOrCreateTable,
   shuffleDeckForTable,
 } from "./src/functions";
+import Table from "./src/models/Table";
 
-const PORT = parseInt(process.env.PORT) ?? 8080;
+const PORT = parseInt(process.env.PORT!) ?? 8080;
 
 const fastify = Fastify({
   logger: true,
@@ -20,15 +20,22 @@ const fastify = Fastify({
 
 fastify.register(fastifyWS);
 
+interface messageBody {
+  action: string;
+  payload: {
+    [key: string]: string;
+  };
+}
+
 /* Sockets */
 fastify.register(async function (fastify) {
   fastify.get("/dealer", { websocket: true }, (socket, request) => {
-    socket.on("message", (message) => {
+    socket.on("message", (message: messageBody) => {
       const { action, payload } = JSON.parse(message.toString());
       console.log("action", action);
 
       switch (action) {
-        case actions.joinTable:
+        case Actions.joinTable:
           const playerId = crypto.randomUUID();
           joinOrCreateTable(payload.tableId, playerId, payload.playerName);
           socket.send(
@@ -39,7 +46,7 @@ fastify.register(async function (fastify) {
           );
           break;
 
-        case actions.generateTableDeck:
+        case Actions.generateTableDeck:
           generateDeckForTable(payload.tableId);
 
           if (payload.isShuffled) {
@@ -51,23 +58,23 @@ fastify.register(async function (fastify) {
           );
           break;
 
-        case actions.shuffleTableDeck:
+        case Actions.shuffleTableDeck:
           shuffleDeckForTable(payload.tableId);
           socket.send(`shuffled deck for ${payload.tableId}`);
           break;
 
-        case actions.divideTableDeck:
+        case Actions.divideTableDeck:
           divideDeckForTable(payload.tableId);
           socket.send(`divided deck for ${payload.tableId}`);
           break;
 
-        case actions.getTableState:
+        case Actions.getTableState:
           /** @type Table */
           const table = getTableById(payload.tableId);
           socket.send(JSON.stringify(table));
           break;
 
-        case actions.getAllTables:
+        case Actions.getAllTables:
           socket.send(JSON.stringify(getTables()));
           break;
       }

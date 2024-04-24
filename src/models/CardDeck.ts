@@ -4,20 +4,22 @@ import PlayingCard, { Suits } from "./PlayingCard";
  * Represents a stack of PlayingCards, either for the Table or within each Player's hand.
  */
 export default class CardDeck {
+  private _cards: PlayingCard[];
+
   /**
    * @constructor
-   * @param {PlayingCard[]} cards - collection of cards to pre-populate this CardDeck, if any.
+   * @param cards - collection of cards to pre-populate this CardDeck, if any.
    */
-  constructor(cards = []) {
+  constructor(cards = [] as PlayingCard[]) {
     this._cards = cards;
   }
 
   /**
    * Generates and returns a full playing deck of PlayingCards.
-   * @param {boolean} hasJokers - flag to include or exclude Joker cards (NOT WORKING).
-   * @returns {CardDeck} a pre-populated CardDeck.
+   * @param hasJokers - flag to include or exclude Joker cards (NOT WORKING).
+   * @returns a pre-populated CardDeck.
    */
-  static generate(hasJokers = false) {
+  static generate(hasJokers: boolean = false): CardDeck {
     const newDeck = new CardDeck();
 
     for (let pip = 1; pip < 14; pip++) {
@@ -34,19 +36,21 @@ export default class CardDeck {
   }
 
   /** Divides the current PlayingCards into partitions for each Player. Automatically removes remainder.
-   * @param {number} playerCount - number of divisions to be made
-   * @returns {Array} dividedCards - array with PlayingCard, separated by player index.
+   * @param playerCount - number of divisions to be made
+   * @returns array with PlayingCard, separated by player index.
    */
-  divide(playerCount) {
+  divide(playerCount: number): PlayingCard[][] {
     const dividedCards = [];
     const divisionSize = this._cards.length / playerCount;
 
     if (this._cards.length > 0) {
       for (let playerIndex = 0; playerIndex < playerCount; playerIndex++) {
-        dividedCards[playerIndex] = [];
+        dividedCards[playerIndex] = [] as PlayingCard[];
         for (let cardIndex = 0; cardIndex < divisionSize; cardIndex++) {
           const card = this._cards.shift();
-          dividedCards[playerIndex].push(card);
+          if (card) {
+            dividedCards[playerIndex].push(card);
+          }
         }
       }
     }
@@ -66,15 +70,15 @@ export default class CardDeck {
 
   /**
    * Adds one card to the existing CardDeck.
-   * @param {PlayingCard} card - PlayingCard to be added. */
-  addCard(card) {
+   * @param card - PlayingCard to be added. */
+  addCard(card: PlayingCard) {
     this._cards.push(card);
   }
 
   /** Removes requested PlayingCard from the existing CardDeck.
-   * @param {PlayingCard} card - PlayingCard to be removed.
+   * @param card - PlayingCard to be removed.
    */
-  removeCard(card) {
+  removeCard(card: PlayingCard) {
     this._cards = this._cards.filter(
       (c) => c.pips !== card.pips && c.suit !== card.suit,
     );
@@ -82,11 +86,11 @@ export default class CardDeck {
 
   /**
    * Finds a card with the specified pips and suit.
-   * @param {number} pips
-   * @param {Suits} suit
-   * @returns {PlayingCard} matching card (if found).
+   * @param pips
+   * @param suit
+   * @returns matching card (if found).
    */
-  findCard(pips, suit) {
+  findCard(pips: number, suit: Suits): PlayingCard | undefined {
     return this._cards.find((card) => card.pips === pips && card.suit === suit);
   }
 }
