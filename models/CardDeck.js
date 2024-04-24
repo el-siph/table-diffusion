@@ -35,25 +35,23 @@ export default class CardDeck {
 
   /** Divides the current PlayingCards into partitions for each Player. Automatically removes remainder.
    * @param {number} playerCount - number of divisions to be made
-   * @returns {object} dividedCards - object with PlayingCard arrays, with index keys.
+   * @returns {Array} dividedCards - array with PlayingCard, separated by player index.
    */
   divide(playerCount) {
-    const dividedCards = {};
+    const dividedCards = [];
     const divisionSize = this._cards.length / playerCount;
 
-    if (this._cards.length) {
+    if (this._cards.length > 0) {
       for (let playerIndex = 0; playerIndex < playerCount; playerIndex++) {
         dividedCards[playerIndex] = [];
-        for (
-          let cardIndex = divisionSize * playerIndex;
-          cardIndex < cardIndex + divisionSize;
-          cardIndex++
-        ) {
-          const card = this._cards[cardIndex * playerIndex - 1];
+        for (let cardIndex = 0; cardIndex < divisionSize; cardIndex++) {
+          const card = this._cards.shift();
           dividedCards[playerIndex].push(card);
         }
       }
     }
+
+    this._cards = []; // clear out remaining cards
 
     return dividedCards;
   }
