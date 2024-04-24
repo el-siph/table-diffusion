@@ -29,8 +29,14 @@ fastify.register(async function (fastify) {
 
       switch (action) {
         case actions.joinTable:
-          joinOrCreateTable(payload.tableId, payload.playerId);
-          socket.send(`joined table '${payload.tableId}'`);
+          const playerId = crypto.randomUUID();
+          joinOrCreateTable(payload.tableId, playerId, payload.playerName);
+          socket.send(
+            JSON.stringify({
+              tableId: payload.tableId,
+              playerId,
+            }),
+          );
           break;
 
         case actions.generateTableDeck:

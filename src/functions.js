@@ -36,9 +36,10 @@ export function getTableById(tableId) {
 
 /**
  * @param {string} tableId - string identifier to join room (if exists)
- * @param {string} playerId - string indentifier to join room as player
+ * @param {string} playerId - generated string indentifier to join room as player
+ * @param {string} playerName - chosen string indentifier
  */
-export function joinOrCreateTable(tableId, playerId) {
+export function joinOrCreateTable(tableId, playerId, playerName) {
   /** @type Table */
   let updatedTable;
 
@@ -50,7 +51,7 @@ export function joinOrCreateTable(tableId, playerId) {
   if (updatedTable.hasPlayer(playerId)) {
     // emit username taken
   } else {
-    updatedTable.addPlayerById(playerId);
+    updatedTable.addPlayerById(playerId, playerName);
   }
 
   return updateTableById(tableId, updatedTable);

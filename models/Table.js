@@ -19,12 +19,13 @@ export default class Table {
 
   /** Adds a Player to this Table, provided their ID is not taken.
    * @param {string} playerId - unique string identifier for Player object to be added.
+   * @param {string} playerName - chosen string indentifier to join room as player
    */
-  addPlayerById(playerId) {
+  addPlayerById(playerId, playerName) {
     if (this._players[playerId]) {
       // do nothing; player already exists
     } else {
-      const newPlayer = new Player(playerId);
+      const newPlayer = new Player(playerId, playerName);
       this._players[playerId] = newPlayer;
     }
   }
