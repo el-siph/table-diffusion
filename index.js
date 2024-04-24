@@ -1,6 +1,6 @@
 import fastifyWS from "@fastify/websocket";
 import Fastify from "fastify";
-import Table from "./models/Table";
+import Table from "./src/models/Table";
 import { actions } from "./src/actions";
 import {
   divideDeckForTable,
