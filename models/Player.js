@@ -1,3 +1,5 @@
+import CardDeck from "./CardDeck";
+
 /** Represents a player at a Table. */
 export default class Player {
   /**
@@ -6,7 +8,7 @@ export default class Player {
    */
   constructor(playerId) {
     this._playerId = playerId;
-    this._deck = [];
+    this._cardDeck = new CardDeck();
   }
 
   get playerId() {
@@ -14,10 +16,13 @@ export default class Player {
   }
 
   get deck() {
-    return this._deck;
+    return this._cardDeck;
   }
 
-  set deck(newDeck) {
-    this._deck = newDeck;
+  /** Assigns new CardDeck to this Player.
+   * @param {CardDeck} newDeck
+   */
+  setDeck(newDeck) {
+    this._cardDeck = newDeck;
   }
 }

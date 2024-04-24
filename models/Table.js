@@ -13,20 +13,47 @@ export default class Table {
   constructor(tableId, ruleset = "ratscrew") {
     this._tableId = tableId;
     this._ruleset = ruleset;
-    this._players = [];
+    this._players = {};
     this._cardDeck = new CardDeck();
   }
 
   /** Adds a Player to this Table, provided their ID is not taken.
    * @param {string} playerId - unique string identifier for Player object to be added.
    */
-  addPlayer(playerId) {
-    const newPlayer = new Player(playerId);
-    if (this._players.find((player) => player.playerId === playerId)) {
+  addPlayerById(playerId) {
+    if (this._players[playerId]) {
       // do nothing; player already exists
     } else {
-      this._players.push(newPlayer);
+      const newPlayer = new Player(playerId);
+      this._players[playerId] = newPlayer;
     }
+  }
+
+  /** Returns if a given playerId is found in the Players list.
+   * @param playerId
+   * @returns {boolean | undefined} Player is found, undefined otherwise.
+   */
+  hasPlayer(playerId) {
+    Object.keys(this._players).map((key) => {
+      if (key === playerId) {
+        return true;
+      }
+    });
+    return false;
+  }
+
+  /** Updates the existing player  */
+  updatePlayerById(playerId, updatedPlayer) {
+    if (this._players[playerId]) {
+      this._players[playerId] = updatedPlayer;
+    }
+  }
+
+  /** Updates the list of Players.
+   * @param {Player[]} players
+   */
+  setPlayers(players) {
+    this._players = structuredClone(players);
   }
 
   get players() {
@@ -37,7 +64,14 @@ export default class Table {
     return this._cardDeck;
   }
 
-  set cardDeck(newDeck) {
+  setCardDeck(newDeck) {
     this._cardDeck = newDeck;
+  }
+
+  assignDeckToPlayer(playerId, cards) {
+    /** @type {Player} */
+    const player = this._players[playerId];
+    player.setDeck(new CardDeck(cards));
+    this.updatePlayerById(playerId, player);
   }
 }

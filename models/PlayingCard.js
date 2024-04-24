@@ -39,7 +39,7 @@ export default class PlayingCard {
    * @param {boolean} isAceFourteen - flags Aces to be 14 pips instead of 1.
    * @returns {PlayingCard} card with higher pip count; neither if they are equal.
    */
-  static getHigherCard(cardA, cardB, isAceFourteen) {
+  static getHigherCard(cardA, cardB, isAceFourteen = true) {
     const cardAClone = structuredClone(cardA);
     const cardBClone = structuredClone(cardB);
 
