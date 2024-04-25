@@ -41,7 +41,9 @@ fastify.register(async function (fastify) {
           socket.send(
             JSON.stringify({
               tableId: randomTableId,
+              tableCode: payload.tableCode,
               playerId: randomPlayerId,
+              playerName: payload.playerName,
             }),
           );
           break;
@@ -79,12 +81,12 @@ fastify.register(async function (fastify) {
       }
     });
 
-    socket.send("Connected to dealer...");
+    socket.send(`{"message": "Connected to dealer..."}`);
 
     socket.on("error", console.error);
 
     socket.on("close", () => {
-      socket.send("Disconnected from websocket.");
+      socket.send(`{"message": "Disconnected from websocket."}`);
     });
   });
 });
