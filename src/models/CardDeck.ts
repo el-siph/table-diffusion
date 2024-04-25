@@ -1,4 +1,4 @@
-import PlayingCard, { Suits } from "./PlayingCard";
+import PlayingCard, { Suits } from "./PlayingCard.js";
 
 /**
  * Represents a stack of PlayingCards, either for the Table or within each Player's hand.

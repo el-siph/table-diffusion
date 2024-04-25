@@ -1,4 +1,4 @@
-import CardDeck from "./CardDeck";
+import CardDeck from "./CardDeck.js";
 
 /** Represents a player at a Table. */
 export default class Player {

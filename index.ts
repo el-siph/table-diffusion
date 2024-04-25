@@ -12,7 +12,7 @@ import {
 } from "./src/functions.js";
 import Table from "./src/models/Table.js";
 
-const PORT = parseInt(process.env.PORT!) ?? 8080;
+const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
 const fastify = Fastify({
   logger: true,
@@ -69,7 +69,7 @@ fastify.register(async function (fastify) {
           break;
 
         case Actions.getTableState:
-          const table: Table = getTableById(payload.tableId);
+          const table: Table | undefined = getTableById(payload.tableId);
           socket.send(JSON.stringify(table));
           break;
 
