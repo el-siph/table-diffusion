@@ -84,7 +84,7 @@ fastify.register(async function (fastify) {
           shuffleDeckForTable(payload.tableId);
           broadcast(
             fastifyServer,
-            `{"message": "shuffled deck for ${payload.tableId}"`,
+            `{"message": "shuffled deck for ${payload.tableId}"}`,
             payload.tableId,
           );
           break;
