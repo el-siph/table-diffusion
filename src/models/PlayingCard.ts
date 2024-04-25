@@ -1,8 +1,8 @@
 export enum Suits {
-  clover,
-  diamonds,
-  hearts,
-  spades,
+  clover = "clover",
+  diamonds = "diamonds",
+  hearts = "hearts",
+  spades = "spades",
 }
 
 /**
