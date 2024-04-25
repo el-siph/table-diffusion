@@ -29,7 +29,7 @@ interface messageBody {
 
 /* Sockets */
 fastify.register(async function (fastify) {
-  fastify.get("/dealer", { websocket: true }, (socket, request) => {
+  fastify.get("/dealer", { websocket: true }, (socket) => {
     socket.on("message", (message: messageBody) => {
       const { action, payload } = JSON.parse(message.toString());
       console.log("action", action);
@@ -89,13 +89,7 @@ fastify.register(async function (fastify) {
   });
 });
 
-/* Routes */
-
-fastify.get("/hello", (request, response) => {
-  response.send({ hello: "from server!" });
-});
-
-fastify.listen({ port: PORT }, (error, address) => {
+fastify.listen({ port: PORT }, (error) => {
   if (error) {
     console.error(error);
     process.exit(1);
