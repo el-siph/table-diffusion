@@ -56,18 +56,18 @@ fastify.register(async function (fastify) {
           }
 
           socket.send(
-            `generated ${payload.isShuffled ? "shuffled " : ""}deck for ${payload.tableId}`,
+            `{"message": "generated ${payload.isShuffled ? "shuffled " : ""}deck for ${payload.tableId}"}`,
           );
           break;
 
         case Actions.shuffleTableDeck:
           shuffleDeckForTable(payload.tableId);
-          socket.send(`shuffled deck for ${payload.tableId}`);
+          socket.send(`{"message": "shuffled deck for ${payload.tableId}"`);
           break;
 
         case Actions.divideTableDeck:
           divideDeckForTable(payload.tableId);
-          socket.send(`divided deck for ${payload.tableId}`);
+          socket.send(`{"message": "divided deck for ${payload.tableId}"}`);
           break;
 
         case Actions.getTableState:
