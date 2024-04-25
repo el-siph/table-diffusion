@@ -61,9 +61,11 @@ WebSocket messages are sent to `ws://localhost:8080/dealer`. A full list of avai
 
 #### Dividing the CardDeck among all Players at the Table
 
+```bash
 {
-"action": "divideTableDeck",
-"payload": {
-"tableId": "JIOI"
+    "action": "divideTableDeck",
+    "payload": {
+        "tableId": "JIOI"
+    }
 }
-}
+```
