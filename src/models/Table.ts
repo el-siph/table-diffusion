@@ -1,6 +1,6 @@
-import CardDeck from "./CardDeck";
-import Player from "./Player";
-import type PlayingCard from "./PlayingCard";
+import CardDeck from "./CardDeck.js";
+import Player from "./Player.js";
+import type PlayingCard from "./PlayingCard.js";
 
 interface PlayersTable {
   [playerId: string]: Player;

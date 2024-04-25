@@ -1,6 +1,6 @@
 import fastifyWS from "@fastify/websocket";
 import Fastify from "fastify";
-import { Actions } from "./src/actions";
+import { Actions } from "./src/actions.js";
 import {
   divideDeckForTable,
   generateDeckForTable,
@@ -9,8 +9,8 @@ import {
   initializeTables,
   joinOrCreateTable,
   shuffleDeckForTable,
-} from "./src/functions";
-import Table from "./src/models/Table";
+} from "./src/functions.js";
+import Table from "./src/models/Table.js";
 
 const PORT = parseInt(process.env.PORT!) ?? 8080;
 
@@ -69,8 +69,7 @@ fastify.register(async function (fastify) {
           break;
 
         case Actions.getTableState:
-          /** @type Table */
-          const table = getTableById(payload.tableId);
+          const table: Table = getTableById(payload.tableId);
           socket.send(JSON.stringify(table));
           break;
 

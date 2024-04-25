@@ -24,7 +24,7 @@ export default class CardDeck {
 
     for (let pip = 1; pip < 14; pip++) {
       Object.values(Suits).map((suit) => {
-        newDeck.addCard(new PlayingCard(pip, suit));
+        newDeck.addCard(new PlayingCard(pip, suit as Suits));
       });
     }
 

@@ -1,5 +1,5 @@
-import CardDeck from "./models/CardDeck";
-import Table from "./models/Table";
+import CardDeck from "./models/CardDeck.js";
+import Table from "./models/Table.js";
 
 /** Main Tables Object; Contains collective state of the application. */
 let tables: { [tableId: string]: Table };
