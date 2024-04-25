@@ -57,8 +57,8 @@ export const enum Actions {
   dealCards = "dealCards",
 
   /** Either joins or creates a Table.
-   * @requires payload with { tableId, playerName }
-   * @returns {{}} object with generated tableId and playerId values.
+   * @requires payload with { tableName, playerName }
+   * @returns @type{JoinTableResponse} object with generated tableId and playerId values.
    */
   joinTable = "joinTable",
 
