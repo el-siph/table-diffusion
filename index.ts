@@ -2,6 +2,7 @@ import fastifyWS from "@fastify/websocket";
 import Fastify from "fastify";
 import { Actions } from "./src/actions.js";
 import {
+  addClientToMap,
   broadcast,
   divideDeckForTable,
   findOrCreateTableIdByCode,
@@ -46,6 +47,8 @@ fastify.register(async function (fastify) {
             payload.playerName,
           );
 
+          addClientToMap(randomTableId, socket);
+
           socket.send(
             JSON.stringify({
               tableId: randomTableId,
@@ -58,6 +61,7 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             `{"message": "${payload.playerName} joined the Table."}`,
+            randomTableId,
           );
           break;
 
@@ -71,6 +75,7 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             `{"message": "generated ${payload.isShuffled ? "shuffled " : ""}deck for ${payload.tableId}"}`,
+            payload.tableId,
           );
 
           break;
@@ -80,6 +85,7 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             `{"message": "shuffled deck for ${payload.tableId}"`,
+            payload.tableId,
           );
           break;
 
@@ -88,16 +94,21 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             `{"message": "divided deck for ${payload.tableId}"}`,
+            payload.tableId,
           );
           break;
 
         case Actions.getTableState:
           const table: Table | undefined = getTableById(payload.tableId);
-          broadcast(fastifyServer, JSON.stringify(table));
+          broadcast(fastifyServer, JSON.stringify(table), payload.tableId);
           break;
 
         case Actions.getAllTables:
-          broadcast(fastifyServer, JSON.stringify(getTables()));
+          broadcast(
+            fastifyServer,
+            JSON.stringify(getTables()),
+            payload.tableId,
+          );
           break;
       }
     });

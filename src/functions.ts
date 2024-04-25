@@ -4,8 +4,11 @@ import Table from "./models/Table.js";
 /** Main Tables Object; Contains collective state of the application. */
 let tables: { [tableId: string]: Table };
 
-/** List of created Tables with `tableCodes`, for easy look-up. */
+/** Map of created Tables with `tableCodes`, for easy look-up. */
 let tableCodesIdsMap: { [tableCode: string]: string };
+
+/** Map of clients (Players) at a given table, for broadcasting. */
+let tableClientMap: { [tableId: string]: any[] };
 
 /** Updates a given Table with a tableId.
  * @param tableId
@@ -18,16 +21,34 @@ function updateTableById(tableId: string, updatedTable: Table) {
 }
 
 /** Broadcasts a message to the list of clients in a server */
-export function broadcast(fastifyServer: any, message: string) {
-  for (const client of fastifyServer.clients) {
+export function broadcast(
+  fastifyServer: any,
+  message: string,
+  tableId?: string,
+) {
+  const clients =
+    tableId && tableClientMap[tableId]
+      ? tableClientMap[tableId]
+      : fastifyServer.clients;
+  for (const client of clients) {
     client.send(message);
   }
+}
+
+/** Adds a client to the tableClientMap, for filtered broadcasts */
+export function addClientToMap(tableId: string, client: any) {
+  if (!tableClientMap[tableId]) {
+    tableClientMap[tableId] = [];
+  }
+
+  tableClientMap[tableId].push(client);
 }
 
 /** Instantiates a Tables object, usually at server startup. */
 export function initializeTables() {
   tables = {};
   tableCodesIdsMap = {};
+  tableClientMap = {};
 }
 
 /** Gets the current state of the Tables object.
