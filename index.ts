@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import { Actions } from "./src/actions.js";
 import {
   divideDeckForTable,
+  findOrCreateTableIdByCode,
   generateDeckForTable,
   getTableById,
   getTables,
@@ -31,7 +32,7 @@ fastify.register(async function (fastify) {
       switch (action) {
         case Actions.joinTable:
           const randomPlayerId = crypto.randomUUID();
-          const randomTableId = crypto.randomUUID();
+          const randomTableId = findOrCreateTableIdByCode(payload.tableCode);
           joinOrCreateTable(
             randomTableId,
             payload.tableCode,

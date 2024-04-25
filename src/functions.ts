@@ -4,6 +4,9 @@ import Table from "./models/Table.js";
 /** Main Tables Object; Contains collective state of the application. */
 let tables: { [tableId: string]: Table };
 
+/** List of created Tables with `tableCodes`, for easy look-up. */
+let tableCodesIdsMap: { [tableCode: string]: string };
+
 /** Updates a given Table with a tableId.
  * @param tableId
  * @param updatedTable
@@ -17,6 +20,7 @@ function updateTableById(tableId: string, updatedTable: Table) {
 /** Instantiates a Tables object, usually at server startup. */
 export function initializeTables() {
   tables = {};
+  tableCodesIdsMap = {};
 }
 
 /** Gets the current state of the Tables object.
@@ -32,6 +36,19 @@ export function getTables(): {} | undefined {
  */
 export function getTableById(tableId: string): Table | undefined {
   return tables[tableId];
+}
+
+/** Either generates a new or references an existing tableId, depending on if a tableCode is recognized. */
+export function findOrCreateTableIdByCode(tableCode: string): string {
+  const tableId = tableCodesIdsMap[tableCode];
+
+  if (tableId) {
+    return tableId;
+  } else {
+    const newTableId = crypto.randomUUID();
+    tableCodesIdsMap[tableCode] = newTableId;
+    return newTableId;
+  }
 }
 
 /**
