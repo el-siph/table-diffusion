@@ -11,6 +11,7 @@ interface PlayersTable {
  */
 export default class Table {
   private _tableId: string;
+  private _tableCode: string;
   private _ruleset: string;
   private _players: PlayersTable;
   private _cardDeck: CardDeck;
@@ -18,10 +19,16 @@ export default class Table {
   /**
    * @constructor
    * @param tableId - unique string identifier for table.
+   * @param tableCode - four-letter identifier for finding this table.
    * @param ruleset - listed ruleset for the game being played.
    */
-  constructor(tableId: string, ruleset: string = "ratscrew") {
+  constructor(
+    tableId: string,
+    tableCode: string,
+    ruleset: string = "ratscrew",
+  ) {
     this._tableId = tableId;
+    this._tableCode = tableCode;
     this._ruleset = ruleset;
     this._players = {};
     this._cardDeck = new CardDeck();
@@ -62,6 +69,10 @@ export default class Table {
 
   get tableId() {
     return this._tableId;
+  }
+
+  get tableCode() {
+    return this._tableCode;
   }
 
   get ruleset() {

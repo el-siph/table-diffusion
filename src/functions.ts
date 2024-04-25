@@ -35,19 +35,21 @@ export function getTableById(tableId: string): Table | undefined {
 }
 
 /**
- * @param tableId - string identifier to join room (if exists)
+ * @param tableId - generated string identifier to join room (if exists)
+ * @param tableCode - chosen string identifier for Table
  * @param playerId - generated string indentifier to join room as player
- * @param playerName - chosen string indentifier
+ * @param playerName - chosen string indentifier for joining Player
  */
 export function joinOrCreateTable(
   tableId: string,
+  tableCode: string,
   playerId: string,
   playerName: string,
 ) {
   let updatedTable: Table;
 
   if (!tables[tableId]) {
-    tables[tableId] = new Table(tableId);
+    tables[tableId] = new Table(tableId, tableCode);
   }
   updatedTable = tables[tableId];
 

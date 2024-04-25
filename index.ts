@@ -11,6 +11,7 @@ import {
   shuffleDeckForTable,
 } from "./src/functions.js";
 import Table from "./src/models/Table.js";
+import { messageBody } from "./src/interfaces.js";
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
@@ -19,13 +20,6 @@ const fastify = Fastify({
 });
 
 fastify.register(fastifyWS);
-
-interface messageBody {
-  action: string;
-  payload: {
-    [key: string]: string;
-  };
-}
 
 /* Sockets */
 fastify.register(async function (fastify) {
@@ -36,12 +30,18 @@ fastify.register(async function (fastify) {
 
       switch (action) {
         case Actions.joinTable:
-          const playerId = crypto.randomUUID();
-          joinOrCreateTable(payload.tableId, playerId, payload.playerName);
+          const randomPlayerId = crypto.randomUUID();
+          const randomTableId = crypto.randomUUID();
+          joinOrCreateTable(
+            randomTableId,
+            payload.tableCode,
+            randomPlayerId,
+            payload.playerName,
+          );
           socket.send(
             JSON.stringify({
-              tableId: payload.tableId,
-              playerId,
+              tableId: randomTableId,
+              playerId: randomPlayerId,
             }),
           );
           break;
