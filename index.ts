@@ -2,6 +2,7 @@ import fastifyWS from "@fastify/websocket";
 import Fastify from "fastify";
 import { Actions } from "./src/actions.js";
 import {
+  broadcast,
   divideDeckForTable,
   findOrCreateTableIdByCode,
   generateDeckForTable,
@@ -20,10 +21,15 @@ const fastify = Fastify({
   logger: true,
 });
 
-fastify.register(fastifyWS);
+fastify.register(fastifyWS, {
+  options: {
+    clientTracking: true,
+  },
+});
 
 /* Sockets */
 fastify.register(async function (fastify) {
+  const fastifyServer = fastify.websocketServer;
   fastify.get("/dealer", { websocket: true }, (socket) => {
     socket.on("message", (message: messageBody) => {
       const { action, payload } = JSON.parse(message.toString());
@@ -39,6 +45,7 @@ fastify.register(async function (fastify) {
             randomPlayerId,
             payload.playerName,
           );
+
           socket.send(
             JSON.stringify({
               tableId: randomTableId,
@@ -46,6 +53,11 @@ fastify.register(async function (fastify) {
               playerId: randomPlayerId,
               playerName: payload.playerName,
             }),
+          );
+
+          broadcast(
+            fastifyServer,
+            `{"message": "${payload.playerName} joined the Table."}`,
           );
           break;
 
@@ -56,28 +68,36 @@ fastify.register(async function (fastify) {
             shuffleDeckForTable(payload.tableId);
           }
 
-          socket.send(
+          broadcast(
+            fastifyServer,
             `{"message": "generated ${payload.isShuffled ? "shuffled " : ""}deck for ${payload.tableId}"}`,
           );
+
           break;
 
         case Actions.shuffleTableDeck:
           shuffleDeckForTable(payload.tableId);
-          socket.send(`{"message": "shuffled deck for ${payload.tableId}"`);
+          broadcast(
+            fastifyServer,
+            `{"message": "shuffled deck for ${payload.tableId}"`,
+          );
           break;
 
         case Actions.divideTableDeck:
           divideDeckForTable(payload.tableId);
-          socket.send(`{"message": "divided deck for ${payload.tableId}"}`);
+          broadcast(
+            fastifyServer,
+            `{"message": "divided deck for ${payload.tableId}"}`,
+          );
           break;
 
         case Actions.getTableState:
           const table: Table | undefined = getTableById(payload.tableId);
-          socket.send(JSON.stringify(table));
+          broadcast(fastifyServer, JSON.stringify(table));
           break;
 
         case Actions.getAllTables:
-          socket.send(JSON.stringify(getTables()));
+          broadcast(fastifyServer, JSON.stringify(getTables()));
           break;
       }
     });

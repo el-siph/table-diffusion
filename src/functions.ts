@@ -17,6 +17,13 @@ function updateTableById(tableId: string, updatedTable: Table) {
   return updatedTable;
 }
 
+/** Broadcasts a message to the list of clients in a server */
+export function broadcast(fastifyServer: any, message: string) {
+  for (const client of fastifyServer.clients) {
+    client.send(message);
+  }
+}
+
 /** Instantiates a Tables object, usually at server startup. */
 export function initializeTables() {
   tables = {};
