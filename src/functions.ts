@@ -1,4 +1,6 @@
 import CardDeck from "./models/CardDeck.js";
+import Player from "./models/Player.js";
+import PlayingCard, { Suits } from "./models/PlayingCard.js";
 import Table from "./models/Table.js";
 
 /** Main Tables Object; Contains collective state of the application. */
@@ -18,6 +20,37 @@ function updateTableById(tableId: string, updatedTable: Table) {
   const updatedTables = tables;
   updatedTables[tableId] = updatedTable;
   return updatedTable;
+}
+
+/** Finds the associated Table and Player(s) for various CardDeck interactions.
+ * @returns an object with all found entries, null otherwise.
+ */
+function getTableAndPlayersByIds(
+  tableId: string,
+  playerId: string,
+  playerIdReceiving?: string,
+): {
+  table: Table | undefined;
+  player: Player | undefined;
+  playerReceiving?: Player | undefined;
+} {
+  const table: Table = tables[tableId];
+  const player = table.players[playerId];
+
+  if (playerIdReceiving) {
+    const playerReceiving = table.players[playerIdReceiving];
+
+    return {
+      table,
+      player,
+      playerReceiving,
+    };
+  }
+
+  return {
+    table,
+    player,
+  };
 }
 
 /** Broadcasts a message to the list of clients in a server */
@@ -115,9 +148,8 @@ export function generateDeckForTable(tableId: string) {
 
   if (table) {
     table.setCardDeck(CardDeck.generate());
+    return updateTableById(tableId, table);
   }
-
-  return updateTableById(tableId, table);
 }
 
 /** Shuffles the current CardDeck for an existing Table.
@@ -125,9 +157,11 @@ export function generateDeckForTable(tableId: string) {
  */
 export function shuffleDeckForTable(tableId: string) {
   const table: Table = tables[tableId];
-  table.cardDeck.shuffle();
+  if (table) {
+    table.cardDeck.shuffle();
 
-  return updateTableById(tableId, table);
+    return updateTableById(tableId, table);
+  }
 }
 
 /** Divides the specified Table's CardDeck into equal CardDecks for each Player.
@@ -135,10 +169,116 @@ export function shuffleDeckForTable(tableId: string) {
  */
 export function divideDeckForTable(tableId: string) {
   const table: Table = tables[tableId];
-  const dividedDecks = table.cardDeck.divide(table.playerCount);
-  Object.keys(table.players).map((key, index) => {
-    const newDeck = new CardDeck(dividedDecks[index]);
-    table.players[key].setDeck(newDeck);
-  });
-  return updateTableById(tableId, table);
+
+  if (table) {
+    const dividedDecks = table.cardDeck.divide(table.playerCount);
+    Object.keys(table.players).map((key, index) => {
+      const newDeck = new CardDeck(dividedDecks[index]);
+      table.players[key].setDeck(newDeck);
+    });
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Moves a select number of PlayingCards from a specified Player's CardDeck to the Table's activePile. */
+export function popPlayerToPile(
+  tableId: string,
+  playerId: string,
+  cardCount = 1,
+) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    const poppedCards = player.deck.popCards(cardCount);
+    table.activePile.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Moves a selection of PlayingCards from a specific Player's CardDeck to the Table's activePile. */
+export function popPlayerToPilePicked(
+  tableId: string,
+  playerId: string,
+  cardsAttributes:
+    | { pips: number; suit: Suits }
+    | { pips: number; suit: Suits }[],
+) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    const poppedCards = player.deck.popCardsByAttribute(cardsAttributes);
+    table.activePile.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Moves a select number of PlayingCards from one Player's CardDeck to another. */
+export function popPlayerToPlayer(
+  tableId: string,
+  playerIdSending: string,
+  playerIdReceiving: string,
+  cardCount = 1,
+) {
+  const {
+    table,
+    player: playerSending,
+    playerReceiving,
+  } = getTableAndPlayersByIds(tableId, playerIdSending, playerIdReceiving);
+
+  if (table && playerSending && playerReceiving) {
+    const poppedCards = playerSending.deck.popCards(cardCount);
+    playerReceiving.deck.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Moves a select number of PlayingCards from the Table's CardDeck to a specific Player's CardDeck */
+export function popTableToPlayer(
+  tableId: string,
+  playerId: string,
+  cardCount = 1,
+) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    const poppedCards = table.cardDeck.popCards(cardCount);
+    player.deck.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Moves a select number of PlayingCards from a Player's CardDeck to their Table's CardDeck. */
+export function popPlayerToTable(
+  tableId: string,
+  playerId: string,
+  cardCount = 1,
+) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    const poppedCards = player.deck.popCards(cardCount);
+    table.cardDeck.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Moves a select number of PlayingCards from a Table's CardDeck to its activePile. */
+export function popTableToPile(tableId: string, cardCount = 1) {
+  const table = getTableById(tableId);
+
+  if (table) {
+    const poppedCards = table.cardDeck.popCards(cardCount);
+    table.activePile.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+/** Shuffles a selected Player's CardDeck. */
+export function shufflePlayerDeck(tableId: string, playerId: string) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    player.deck.shuffle();
+    return updateTableById(tableId, table);
+  }
 }

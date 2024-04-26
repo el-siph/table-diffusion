@@ -42,19 +42,19 @@ export const enum Actions {
 
   /* Deck-to-Deck interactions */
 
-  /** (UNIMPLEMENTED) Sends specified amount of PlayingCards from the Table's CardDeck to the specified Player's CardDeck (default = 1).
+  /** Sends specified amount of PlayingCards from the Table's CardDeck to the specified Player's CardDeck (default = 1).
    * @requires payload with { tableId, playerId, cardCount? }
    * @returns void
    */
   popTableToPlayer = "popTableToPlayer",
 
-  /** (UNIMPLEMENTED) Sends specified amount of PlayingCards from a specific Players's CardDeck to the Tables's CardDeck (default = 1).
+  /** Sends specified amount of PlayingCards from a specific Players's CardDeck to the Tables's CardDeck (default = 1).
    * @requires payload with { tableId, playerId, cardCount? }
    * @returns void
    */
   popPlayerToTable = "popPlayerToTable",
 
-  /** (UNIMPLEMENTED) Sends specific amount of PlayingCards from the Table's CardDeck to the Table's activePile (default = 1).
+  /** Sends specific amount of PlayingCards from the Table's CardDeck to the Table's activePile (default = 1).
    * @requires payload with { tableId, cardAmount? }
    */
   popTableToPile = "popTableToPile",
@@ -70,7 +70,7 @@ export const enum Actions {
   popPlayerToPlayer = "popPlayerToPlayer",
 
   /** (Not Implemented) Sends specific PlayingCards from the Player's CardDeck to the Table's activePile (default = 1).
-   * @requires payload with { tableId, playerId, cards: { pips, suit }[] }
+   * @requires payload with { tableId, playerId, cardAttributes: { pips, suit } | { pips, suit }[] }
    */
   popPlayerToPilePicked = "popPlayerToPilePicked",
 

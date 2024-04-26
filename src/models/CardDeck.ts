@@ -95,7 +95,9 @@ export default class CardDeck {
    * @returns either an empty array, one PlayingCard, or an array of PlayingCards, depending on what matches.
    */
   popCardsByAttribute(
-    targetCards: PlayingCard | PlayingCard[],
+    targetCards:
+      | { pips: number; suit: Suits }
+      | { pips: number; suit: Suits }[],
   ): PlayingCard | PlayingCard[] {
     let poppedCards = [] as PlayingCard[];
     let unpoppedCards = [] as PlayingCard[];
