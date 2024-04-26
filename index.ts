@@ -67,7 +67,9 @@ fastify.register(async function (fastify) {
 
           broadcast(
             fastifyServer,
-            `{"message": "Player::${payload.playerName} joined the Table."}`,
+            JSON.stringify({
+              message: `Player::${payload.playerName} joined the Table.`,
+            }),
             randomTableId,
           );
           break;
@@ -81,7 +83,9 @@ fastify.register(async function (fastify) {
 
           broadcast(
             fastifyServer,
-            `{"message": "generated ${payload.isShuffled ? "shuffled " : ""}deck for Table::${payload.tableId}"}`,
+            JSON.stringify({
+              message: `generated ${payload.isShuffled ? "shuffled " : ""}deck for Table::${payload.tableId}`,
+            }),
             payload.tableId,
           );
 
@@ -91,7 +95,9 @@ fastify.register(async function (fastify) {
           shuffleDeckForTable(payload.tableId);
           broadcast(
             fastifyServer,
-            `{"message": "shuffled deck for Table::${payload.tableId}"}`,
+            JSON.stringify({
+              message: `shuffled deck for Table::${payload.tableId}`,
+            }),
             payload.tableId,
           );
           break;
@@ -100,7 +106,9 @@ fastify.register(async function (fastify) {
           divideDeckForTable(payload.tableId);
           broadcast(
             fastifyServer,
-            `{"message": "divided deck for Table::${payload.tableId}"}`,
+            JSON.stringify({
+              message: `divided deck for Table::${payload.tableId}`,
+            }),
             payload.tableId,
           );
           break;
@@ -234,12 +242,12 @@ fastify.register(async function (fastify) {
       }
     });
 
-    socket.send(`{"message": "Connected to dealer..."}`);
+    socket.send(JSON.stringify({ message: "Connected to dealer..." }));
 
     socket.on("error", console.error);
 
     socket.on("close", () => {
-      socket.send(`{"message": "Disconnected from websocket."}`);
+      socket.send(JSON.stringify({ message: "Disconnected from websocket." }));
     });
   });
 });
