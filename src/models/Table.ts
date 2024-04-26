@@ -15,6 +15,7 @@ export default class Table {
   private _ruleset: string;
   private _players: PlayersTable;
   private _cardDeck: CardDeck;
+  private _activePile: CardDeck;
 
   /**
    * @constructor
@@ -32,6 +33,7 @@ export default class Table {
     this._ruleset = ruleset;
     this._players = {};
     this._cardDeck = new CardDeck();
+    this._activePile = new CardDeck();
   }
 
   /** Adds a Player to this Table, provided their ID is not taken.
@@ -94,8 +96,23 @@ export default class Table {
     return this._cardDeck;
   }
 
+  get activePile() {
+    return this._activePile;
+  }
+
   setCardDeck(newDeck: CardDeck) {
     this._cardDeck = newDeck;
+  }
+
+  setActivePile(newDeck: CardDeck) {
+    this._activePile = newDeck;
+  }
+
+  addCardsToActivePile(cards: PlayingCard | PlayingCard[]) {
+    if (Array.isArray(cards)) {
+    } else {
+      this._activePile.pushCards(cards);
+    }
   }
 
   get playerCount() {
