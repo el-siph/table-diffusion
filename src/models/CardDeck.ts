@@ -24,7 +24,7 @@ export default class CardDeck {
 
     for (let pip = 1; pip < 14; pip++) {
       Object.values(Suits).map((suit) => {
-        newDeck.addCard(new PlayingCard(pip, suit as Suits));
+        newDeck.pushCards(new PlayingCard(pip, suit as Suits));
       });
     }
 
@@ -69,19 +69,80 @@ export default class CardDeck {
   }
 
   /**
-   * Adds one card to the existing CardDeck.
-   * @param card - PlayingCard to be added. */
-  addCard(card: PlayingCard) {
-    this._cards.push(card);
+   * Adds one or more cards to the existing CardDeck.
+   * @param cards - PlayingCard(s) to be added. */
+  pushCards(cards: PlayingCard | PlayingCard[]) {
+    if (Array.isArray(cards)) {
+      this._cards = [...this._cards, ...cards];
+    } else {
+      this._cards.push(cards);
+    }
+  }
+
+  /** Removes and returns the specified number of cards */
+  popCards(cardCount: number): PlayingCard | PlayingCard[] {
+    if (!this._cards || this._cards.length < 1 || cardCount < 1) {
+      return [];
+    }
+    if (cardCount === 1) {
+      return this._cards.pop()!;
+    } else {
+      return this._cards.splice(0, cardCount);
+    }
+  }
+
+  /** Removes and returns the specified PlayingCards.
+   * @returns either an empty array, one PlayingCard, or an array of PlayingCards, depending on what matches.
+   */
+  popCardsByAttribute(
+    targetCards: PlayingCard | PlayingCard[],
+  ): PlayingCard | PlayingCard[] {
+    let poppedCards = [] as PlayingCard[];
+    let unpoppedCards = [] as PlayingCard[];
+
+    if (!Array.isArray(targetCards)) {
+      targetCards = [targetCards];
+    }
+
+    for (const targetCard of targetCards) {
+      for (let i = 0; i < this._cards.length; i++) {
+        const checkedCard = this._cards[i];
+        if (
+          checkedCard.pips === targetCard.pips &&
+          checkedCard.suit === targetCard.suit
+        ) {
+          poppedCards.push(checkedCard);
+        } else {
+          unpoppedCards.push(checkedCard);
+        }
+      }
+    }
+
+    this._cards = [...unpoppedCards];
+
+    return poppedCards.length < 1
+      ? []
+      : poppedCards.length < 2
+        ? poppedCards[0]
+        : [...poppedCards];
   }
 
   /** Removes requested PlayingCard from the existing CardDeck.
-   * @param card - PlayingCard to be removed.
+   * @param cards - PlayingCard to be removed.
    */
-  removeCard(card: PlayingCard) {
-    this._cards = this._cards.filter(
-      (c) => c.pips !== card.pips && c.suit !== card.suit,
-    );
+  removeCards(cards: PlayingCard | PlayingCard[]) {
+    let cardsToFilter: PlayingCard[];
+    if (!Array.isArray(cards)) {
+      cardsToFilter = [cards];
+    } else {
+      cardsToFilter = cards;
+    }
+
+    cardsToFilter.map((card) => {
+      this._cards = this._cards.filter(
+        (c) => c.pips !== card.pips && c.suit !== card.suit,
+      );
+    });
   }
 
   /**
