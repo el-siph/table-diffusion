@@ -21,7 +21,7 @@ import {
   shufflePlayerDeck,
 } from "./src/functions.js";
 import Table from "./src/models/Table.js";
-import { messageBody } from "./src/interfaces.js";
+import { BroadcastTypes, MessageBody } from "./src/interfaces.js";
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
@@ -39,7 +39,7 @@ fastify.register(fastifyWS, {
 fastify.register(async function (fastify) {
   const fastifyServer = fastify.websocketServer;
   fastify.get("/dealer", { websocket: true }, (socket) => {
-    socket.on("message", (message: messageBody) => {
+    socket.on("message", (message: MessageBody) => {
       const { action, payload } = JSON.parse(message.toString());
       console.log("action", action);
 
@@ -67,9 +67,12 @@ fastify.register(async function (fastify) {
 
           broadcast(
             fastifyServer,
-            JSON.stringify({
-              message: `Player::${payload.playerName} joined the Table.`,
-            }),
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
+                message: `Player::${payload.playerName} joined the Table.`,
+              },
+            },
             randomTableId,
           );
           break;
@@ -83,9 +86,12 @@ fastify.register(async function (fastify) {
 
           broadcast(
             fastifyServer,
-            JSON.stringify({
-              message: `generated ${payload.isShuffled ? "shuffled " : ""}deck for Table::${payload.tableId}`,
-            }),
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
+                message: `generated ${payload.isShuffled ? "shuffled " : ""}deck for Table::${payload.tableId}`,
+              },
+            },
             payload.tableId,
           );
 
@@ -95,9 +101,12 @@ fastify.register(async function (fastify) {
           shuffleDeckForTable(payload.tableId);
           broadcast(
             fastifyServer,
-            JSON.stringify({
-              message: `shuffled deck for Table::${payload.tableId}`,
-            }),
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
+                message: `shuffled deck for Table::${payload.tableId}`,
+              },
+            },
             payload.tableId,
           );
           break;
@@ -106,9 +115,12 @@ fastify.register(async function (fastify) {
           divideDeckForTable(payload.tableId);
           broadcast(
             fastifyServer,
-            JSON.stringify({
-              message: `divided deck for Table::${payload.tableId}`,
-            }),
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
+                message: `divided deck for Table::${payload.tableId}`,
+              },
+            },
             payload.tableId,
           );
           break;
@@ -118,12 +130,13 @@ fastify.register(async function (fastify) {
           popPlayerToPile(payload.tableId, payload.playerId, ptpileCardCount);
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `${ptpileCardCount} card(s) moved to Table::${payload.tableId}'s activePile.`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
@@ -137,12 +150,13 @@ fastify.register(async function (fastify) {
           );
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `${ptplayerCardCount} card(s) moved from Player::${payload.playerIdSending} to Player::${payload.playerIdReceiving}`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
@@ -156,12 +170,13 @@ fastify.register(async function (fastify) {
 
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `${playerToTableCount} card(s) moved from Player::${payload.playerId} to Table::${payload.tableId}`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
@@ -174,12 +189,13 @@ fastify.register(async function (fastify) {
           );
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `${tableToPlayerCount} card(s) moved from Table::${payload.tableId} to Player::${payload.playerId}`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
@@ -188,12 +204,13 @@ fastify.register(async function (fastify) {
           popTableToPile(payload.tableId, tableToPileCount);
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `${tableToPileCount} card(s) moved from Player::${payload.playerIdSending} to Player::${payload.playerIdReceiving}`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
@@ -205,12 +222,13 @@ fastify.register(async function (fastify) {
           );
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `Chosen card(s) moved from Player::${payload.playerId} to Table::${payload.tableId}'s activePile.`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
@@ -218,24 +236,39 @@ fastify.register(async function (fastify) {
           shufflePlayerDeck(payload.tableId, payload.playerId);
           broadcast(
             fastifyServer,
-            JSON.stringify(
-              {
+            {
+              type: BroadcastTypes.confirmation,
+              data: {
                 message: `Shuffled CardDeck for Player::${payload.playerId}.`,
               },
-              payload.tableId,
-            ),
+            },
+            payload.tableId,
           );
           break;
 
         case Actions.getTableState:
           const table: Table | undefined = getTableById(payload.tableId);
-          broadcast(fastifyServer, JSON.stringify(table), payload.tableId);
+          broadcast(
+            fastifyServer,
+            {
+              type: BroadcastTypes.data,
+              data: {
+                table,
+              },
+            },
+            payload.tableId,
+          );
           break;
 
         case Actions.getAllTables:
           broadcast(
             fastifyServer,
-            JSON.stringify(getTables()),
+            {
+              type: BroadcastTypes.data,
+              data: {
+                tables: getTables(),
+              },
+            },
             payload.tableId,
           );
           break;

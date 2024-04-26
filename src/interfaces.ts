@@ -1,6 +1,6 @@
 import { Suits } from "./models/PlayingCard.js";
 
-export interface messageBody {
+export interface MessageBody {
   action: string;
   payload: {
     [key: string]: string;
@@ -16,4 +16,14 @@ export interface JoinTableResponse {
 export interface CardAttribute {
   pips: number;
   suit: Suits;
+}
+
+export const enum BroadcastTypes {
+  confirmation = "confirmation",
+  data = "data",
+}
+
+export interface BroadcastMessage {
+  type: BroadcastTypes;
+  data?: {} | [];
 }

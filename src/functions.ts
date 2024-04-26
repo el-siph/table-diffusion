@@ -1,7 +1,6 @@
-import { CardAttribute } from "./interfaces.js";
+import { BroadcastMessage, CardAttribute } from "./interfaces.js";
 import CardDeck from "./models/CardDeck.js";
 import Player from "./models/Player.js";
-import PlayingCard, { Suits } from "./models/PlayingCard.js";
 import Table from "./models/Table.js";
 
 /** Main Tables Object; Contains collective state of the application. */
@@ -57,7 +56,7 @@ function getTableAndPlayersByIds(
 /** Broadcasts a message to the list of clients in a server */
 export function broadcast(
   fastifyServer: any,
-  message: string,
+  message: BroadcastMessage,
   tableId?: string,
 ) {
   const clients =
@@ -65,7 +64,7 @@ export function broadcast(
       ? tableClientMap[tableId]
       : fastifyServer.clients;
   for (const client of clients) {
-    client.send(message);
+    client.send(JSON.stringify(message));
   }
 }
 
