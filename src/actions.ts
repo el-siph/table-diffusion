@@ -2,6 +2,8 @@
  * List of Available Interactions with the Table manager
  */
 export const enum Actions {
+  /* Table CardDeck modifiers */
+
   /** Generates a central CardDeck for the Table.
    * @requires payload with { tableId }
    * @returns void
@@ -32,29 +34,47 @@ export const enum Actions {
    */
   divideTableDeck = "divideTableDeck",
 
-  /** Sends specified amount of PlayingCards from the Table CardDeck to the specified Player's CardDeck (default = 1).
-   * @requires payload with { tableId, playerId, cardAmount? }
+  /** Records a valid/invalid slap event from a player with the playerId in payload (for Ratscrew).
+   * @requires payload with { tableId, playerId, isSlapValid }
    * @returns void
    */
-  popToPlayer = "popToPlayer",
+  slapDeck = "slapDeck",
 
-  /** Sends specified amount of PlayingCards from the Table's CardDeck to the specified Player's CardDeck (default = 1).
-   * @requires payload with { tableId, playerId, cardAmount? }
+  /* Deck-to-Deck interactions */
+
+  /** (UNIMPLEMENTED) Sends specified amount of PlayingCards from the Table's CardDeck to the specified Player's CardDeck (default = 1).
+   * @requires payload with { tableId, playerId, cardCount? }
    * @returns void
    */
-  popToTable = "popToTable",
+  popTableToPlayer = "popTableToPlayer",
 
-  // /** UNUSED: Receives one or multiple cards to be put into the Table's CardDeck.
-  //  * @requires payload with { tableId, card: { pips, suit } }
-  //  * @returns void
-  //  */
-  acceptCards = "acceptCards",
+  /** (UNIMPLEMENTED) Sends specified amount of PlayingCards from a specific Players's CardDeck to the Tables's CardDeck (default = 1).
+   * @requires payload with { tableId, playerId, cardCount? }
+   * @returns void
+   */
+  popPlayerToTable = "popPlayerToTable",
 
-  // /** UNUSED: Sends one or multiple cards to the requested Player's CardDeck.
-  //  * @requires payload with { tableId, playerId }
-  //  * @returns void
-  //  */
-  dealCards = "dealCards",
+  /** (UNIMPLEMENTED) Sends specific amount of PlayingCards from the Table's CardDeck to the Table's activePile (default = 1).
+   * @requires payload with { tableId, cardAmount? }
+   */
+  popTableToPile = "popTableToPile",
+
+  /** Sends specific amount of PlayingCards from a Player's CardDeck to the Table's activePile (default = 1).
+   * @requires payload with { tableId, playerId, cardCount? }
+   */
+  popPlayerToPile = "popPlayerToPile",
+
+  /** Sends a specific amount of PlayingCards from one Player's CardDeck to another's (default = 1).
+   * @requires payload with { tableId, playerIdSending, playerIdReceiving, cardCount? }
+   */
+  popPlayerToPlayer = "popPlayerToPlayer",
+
+  /** (Not Implemented) Sends specific PlayingCards from the Player's CardDeck to the Table's activePile (default = 1).
+   * @requires payload with { tableId, playerId, cards: { pips, suit }[] }
+   */
+  popPlayerToPilePicked = "popPlayerToPilePicked",
+
+  /* Table endpoints */
 
   /** Either joins or creates a Table.
    * @requires payload with { tableName, playerName }
@@ -73,9 +93,15 @@ export const enum Actions {
    */
   getAllTables = "getAllTables",
 
-  /** Records a valid/invalid slap event from a player with the playerId in payload (for Ratscrew).
-   * @requires payload with { tableId, playerId, isSlapValid }
-   * @returns void
-   */
-  slapDeck = "slapDeck",
+  // /** UNUSED: Receives one or multiple cards to be put into the Table's CardDeck.
+  //  * @requires payload with { tableId, card: { pips, suit } }
+  //  * @returns void
+  //  */
+  // acceptCards = "acceptCards",
+
+  // /** UNUSED: Sends one or multiple cards to the requested Player's CardDeck.
+  //  * @requires payload with { tableId, playerId }
+  //  * @returns void
+  //  */
+  // dealCards = "dealCards",
 }
