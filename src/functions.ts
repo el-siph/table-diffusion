@@ -1,3 +1,4 @@
+import { CardAttribute } from "./interfaces.js";
 import CardDeck from "./models/CardDeck.js";
 import Player from "./models/Player.js";
 import PlayingCard, { Suits } from "./models/PlayingCard.js";
@@ -189,7 +190,7 @@ export function popPlayerToPile(
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    const poppedCards = player.deck.popCards(cardCount);
+    const poppedCards = player.cardDeck.popCards(cardCount);
     table.activePile.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
@@ -199,14 +200,12 @@ export function popPlayerToPile(
 export function popPlayerToPilePicked(
   tableId: string,
   playerId: string,
-  cardsAttributes:
-    | { pips: number; suit: Suits }
-    | { pips: number; suit: Suits }[],
+  cardsAttributes: CardAttribute | CardAttribute[],
 ) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    const poppedCards = player.deck.popCardsByAttribute(cardsAttributes);
+    const poppedCards = player.cardDeck.popCardsByAttribute(cardsAttributes);
     table.activePile.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
@@ -226,8 +225,8 @@ export function popPlayerToPlayer(
   } = getTableAndPlayersByIds(tableId, playerIdSending, playerIdReceiving);
 
   if (table && playerSending && playerReceiving) {
-    const poppedCards = playerSending.deck.popCards(cardCount);
-    playerReceiving.deck.pushCards(poppedCards);
+    const poppedCards = playerSending.cardDeck.popCards(cardCount);
+    playerReceiving.cardDeck.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
 }
@@ -242,7 +241,7 @@ export function popTableToPlayer(
 
   if (table && player) {
     const poppedCards = table.cardDeck.popCards(cardCount);
-    player.deck.pushCards(poppedCards);
+    player.cardDeck.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
 }
@@ -256,7 +255,7 @@ export function popPlayerToTable(
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    const poppedCards = player.deck.popCards(cardCount);
+    const poppedCards = player.cardDeck.popCards(cardCount);
     table.cardDeck.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
@@ -278,7 +277,7 @@ export function shufflePlayerDeck(tableId: string, playerId: string) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    player.deck.shuffle();
+    player.cardDeck.shuffle();
     return updateTableById(tableId, table);
   }
 }

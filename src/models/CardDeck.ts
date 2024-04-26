@@ -1,3 +1,4 @@
+import { CardAttribute } from "../interfaces.js";
 import PlayingCard, { Suits } from "./PlayingCard.js";
 
 /**
@@ -95,9 +96,7 @@ export default class CardDeck {
    * @returns either an empty array, one PlayingCard, or an array of PlayingCards, depending on what matches.
    */
   popCardsByAttribute(
-    targetCards:
-      | { pips: number; suit: Suits }
-      | { pips: number; suit: Suits }[],
+    targetCards: CardAttribute | CardAttribute[],
   ): PlayingCard | PlayingCard[] {
     let poppedCards = [] as PlayingCard[];
     let unpoppedCards = [] as PlayingCard[];

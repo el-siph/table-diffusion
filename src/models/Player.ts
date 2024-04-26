@@ -32,7 +32,7 @@ export default class Player {
     this._playerName = newPlayerName;
   }
 
-  get deck() {
+  get cardDeck() {
     return this._cardDeck;
   }
 
