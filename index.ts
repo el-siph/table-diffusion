@@ -58,18 +58,21 @@ fastify.register(async function (fastify) {
 
           socket.send(
             JSON.stringify({
-              tableId: randomTableId,
-              tableCode: payload.tableCode,
-              playerId: randomPlayerId,
-              playerName: payload.playerName,
+              responseType: BroadcastTypes.registerData,
+              payload: {
+                tableId: randomTableId,
+                tableCode: payload.tableCode,
+                playerId: randomPlayerId,
+                playerName: payload.playerName,
+              },
             }),
           );
 
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `Player::${payload.playerName} joined the Table.`,
               },
             },
@@ -87,8 +90,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `generated ${payload.isShuffled ? "shuffled " : ""}deck for Table::${payload.tableId}`,
               },
             },
@@ -102,8 +105,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `shuffled deck for Table::${payload.tableId}`,
               },
             },
@@ -116,8 +119,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `divided deck for Table::${payload.tableId}`,
               },
             },
@@ -131,8 +134,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `${ptpileCardCount} card(s) moved to Table::${payload.tableId}'s activePile.`,
               },
             },
@@ -151,8 +154,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `${ptplayerCardCount} card(s) moved from Player::${payload.playerIdSending} to Player::${payload.playerIdReceiving}`,
               },
             },
@@ -171,8 +174,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `${playerToTableCount} card(s) moved from Player::${payload.playerId} to Table::${payload.tableId}`,
               },
             },
@@ -190,8 +193,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `${tableToPlayerCount} card(s) moved from Table::${payload.tableId} to Player::${payload.playerId}`,
               },
             },
@@ -205,8 +208,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `${tableToPileCount} card(s) moved from Player::${payload.playerIdSending} to Player::${payload.playerIdReceiving}`,
               },
             },
@@ -223,8 +226,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `Chosen card(s) moved from Player::${payload.playerId} to Table::${payload.tableId}'s activePile.`,
               },
             },
@@ -237,8 +240,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.confirmation,
-              data: {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
                 message: `Shuffled CardDeck for Player::${payload.playerId}.`,
               },
             },
@@ -251,8 +254,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.data,
-              data: {
+              responseType: BroadcastTypes.tableData,
+              payload: {
                 table,
               },
             },
@@ -264,8 +267,8 @@ fastify.register(async function (fastify) {
           broadcast(
             fastifyServer,
             {
-              type: BroadcastTypes.data,
-              data: {
+              responseType: BroadcastTypes.tableData,
+              payload: {
                 tables: getTables(),
               },
             },
@@ -275,12 +278,22 @@ fastify.register(async function (fastify) {
       }
     });
 
-    socket.send(JSON.stringify({ message: "Connected to dealer..." }));
+    socket.send(
+      JSON.stringify({
+        responseType: BroadcastTypes.confirmation,
+        payload: { message: "Connected to dealer..." },
+      }),
+    );
 
     socket.on("error", console.error);
 
     socket.on("close", () => {
-      socket.send(JSON.stringify({ message: "Disconnected from websocket." }));
+      socket.send(
+        JSON.stringify({
+          responseType: BroadcastTypes.confirmation,
+          payload: { message: "Disconnected from websocket." },
+        }),
+      );
     });
   });
 });

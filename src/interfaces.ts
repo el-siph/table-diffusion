@@ -20,10 +20,12 @@ export interface CardAttribute {
 
 export const enum BroadcastTypes {
   confirmation = "confirmation",
-  data = "data",
+  registerData = "registerData",
+  tableData = "tableData",
+  playerData = "playerData",
 }
 
 export interface BroadcastMessage {
-  type: BroadcastTypes;
-  data?: {} | [];
+  responseType: BroadcastTypes;
+  payload?: {} | [];
 }
