@@ -49,17 +49,22 @@ export default class Table {
     }
   }
 
-  /** Returns if a given playerId is found in the Players list.
-   * @param playerId
+  /** Returns a playerId if a playerName is found in the Players list.
+   * @param playerName
    * @returns Player is found, undefined otherwise.
    */
-  hasPlayer(playerId: string): boolean {
+  findPlayerIdByName(playerName: string): string | null {
+    console.log("searching for", playerName);
+    let retval = null;
     Object.keys(this._players).map((key) => {
-      if (key === playerId) {
-        return true;
+      console.log("evaluating player", key);
+      const player = this._players[key];
+      if (player.playerName === playerName) {
+        console.log("playerFound for", playerName);
+        retval = player.playerId;
       }
     });
-    return false;
+    return retval;
   }
 
   /** Updates the existing player  */

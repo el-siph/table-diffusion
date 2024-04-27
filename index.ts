@@ -5,6 +5,7 @@ import {
   addClientToMap,
   broadcast,
   divideDeckForTable,
+  findOrCreatePlayerIdByName,
   findOrCreateTableIdByCode,
   generateDeckForTable,
   getTableById,
@@ -45,14 +46,18 @@ fastify.register(async function (fastify) {
 
       switch (action) {
         case Actions.joinTable:
-          const randomPlayerId = crypto.randomUUID();
           const randomTableId = findOrCreateTableIdByCode(payload.tableCode);
-          joinOrCreateTable(
-            randomTableId,
-            payload.tableCode,
-            randomPlayerId,
-            payload.playerName,
-          );
+          const { playerId: randomPlayerId, wasFound } =
+            findOrCreatePlayerIdByName(randomTableId, payload.playerName);
+
+          if (!wasFound) {
+            joinOrCreateTable(
+              randomTableId,
+              payload.tableCode,
+              randomPlayerId,
+              payload.playerName,
+            );
+          }
 
           addClientToMap(randomTableId, socket);
 

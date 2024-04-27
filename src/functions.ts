@@ -99,6 +99,26 @@ export function getTableById(tableId: string): Table | undefined {
   return tables[tableId];
 }
 
+/** Returns either a generated playerId or an existing one associated with the provided playerName. */
+export function findOrCreatePlayerIdByName(
+  tableId: string,
+  playerName: string,
+): { playerId: string; wasFound: boolean } {
+  const table = tables[tableId];
+
+  if (table) {
+    let playerId = table.findPlayerIdByName(playerName);
+    return playerId
+      ? { playerId, wasFound: true }
+      : {
+          playerId: crypto.randomUUID(),
+          wasFound: false,
+        };
+  }
+
+  return { playerId: crypto.randomUUID(), wasFound: false };
+}
+
 /** Either generates a new or references an existing tableId, depending on if a tableCode is recognized. */
 export function findOrCreateTableIdByCode(tableCode: string): string {
   const tableId = tableCodesIdsMap[tableCode];
@@ -131,9 +151,7 @@ export function joinOrCreateTable(
   }
   updatedTable = tables[tableId];
 
-  if (updatedTable.hasPlayer(playerId)) {
-    // emit username taken
-  } else {
+  if (updatedTable.findPlayerIdByName(playerName) === null) {
     updatedTable.addPlayerById(playerId, playerName);
   }
 
