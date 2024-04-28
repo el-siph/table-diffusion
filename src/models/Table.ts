@@ -16,6 +16,7 @@ export default class Table {
   private _players: PlayersTable;
   private _cardDeck: CardDeck;
   private _activePile: CardDeck;
+  private _playerCount: number;
 
   /**
    * @constructor
@@ -34,6 +35,7 @@ export default class Table {
     this._players = {};
     this._cardDeck = new CardDeck();
     this._activePile = new CardDeck();
+    this._playerCount = 0;
   }
 
   /** Adds a Player to this Table, provided their ID is not taken.
@@ -46,7 +48,21 @@ export default class Table {
     } else {
       const newPlayer = new Player(playerId, playerName);
       this._players[playerId] = newPlayer;
+      this._playerCount++;
     }
+  }
+
+  /** Removes a Player from this Table, provided their ID is found. */
+  removePlayerById(playerId: string) {
+    const newPlayers: PlayersTable = {};
+    Object.keys(this._players).map((key) => {
+      if (key !== playerId) {
+        newPlayers[key] = this._players[key];
+      }
+    });
+
+    this._players = newPlayers;
+    this._playerCount--;
   }
 
   /** Returns a playerId if a playerName is found in the Players list.
@@ -121,7 +137,7 @@ export default class Table {
   }
 
   get playerCount() {
-    return Object.keys(this._players).length;
+    return this._playerCount;
   }
 
   assignDeckToPlayer(playerId: string, cards: PlayingCard[]) {
