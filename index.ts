@@ -65,10 +65,10 @@ fastify.register(async function (fastify) {
             JSON.stringify({
               responseType: BroadcastTypes.registerData,
               payload: {
-                tableId: randomTableId,
-                tableCode: payload.tableCode,
-                playerId: randomPlayerId,
-                playerName: payload.playerName,
+                _tableId: randomTableId,
+                _tableCode: payload.tableCode,
+                _playerId: randomPlayerId,
+                _playerName: payload.playerName,
               },
             }),
           );
