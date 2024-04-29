@@ -10,6 +10,12 @@ export const enum Actions {
    */
   generateTableDeck = "generateTableDeck",
 
+  /** Replaces all PlayingCards back into the central Table's CardDeck.
+   * @requires payload with { tableId }
+   * @returns void
+   */
+  resetTableDecks = "resetTableDecks",
+
   /** Shuffles the CardDeck for the Table (if present).
    * @requires payload with { tableId }
    * @returns void

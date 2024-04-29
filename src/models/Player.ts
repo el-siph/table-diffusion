@@ -4,7 +4,8 @@ import CardDeck from "./CardDeck.js";
 export default class Player {
   private _playerId: string;
   private _playerName: string;
-  private _cardDeck: CardDeck;
+  private _activeDeck: CardDeck;
+  private _passiveDeck: CardDeck; // deck not currently in play; becomes the new _activeDeck after the original is exhausted
 
   /**
    * @constructor
@@ -14,7 +15,8 @@ export default class Player {
   constructor(playerId: string, playerName: string) {
     this._playerId = playerId;
     this._playerName = playerName;
-    this._cardDeck = new CardDeck();
+    this._activeDeck = new CardDeck();
+    this._passiveDeck = new CardDeck();
   }
 
   get playerId() {
@@ -32,14 +34,22 @@ export default class Player {
     this._playerName = newPlayerName;
   }
 
-  get cardDeck() {
-    return this._cardDeck;
+  get activeDeck() {
+    return this._activeDeck;
   }
 
-  /** Assigns new CardDeck to this Player.
+  get passiveDeck() {
+    return this._passiveDeck;
+  }
+
+  /** Assigns new active CardDeck to this Player.
    * @param newDeck
    */
-  setDeck(newDeck: CardDeck) {
-    this._cardDeck = newDeck;
+  setActiveDeck(newDeck: CardDeck) {
+    this._activeDeck = newDeck;
+  }
+
+  setPassiveDeck(newDeck: CardDeck) {
+    this._passiveDeck = newDeck;
   }
 }

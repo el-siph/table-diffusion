@@ -155,4 +155,8 @@ export default class CardDeck {
   findCard(pips: number, suit: Suits): PlayingCard | undefined {
     return this._cards.find((card) => card.pips === pips && card.suit === suit);
   }
+
+  reset() {
+    this._cards = [];
+  }
 }

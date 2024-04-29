@@ -18,6 +18,7 @@ import {
   popPlayerToTable,
   popTableToPile,
   popTableToPlayer,
+  resetAllDecks,
   shuffleDeckForTable,
   shufflePlayerDeck,
 } from "./src/functions.js";
@@ -248,6 +249,20 @@ fastify.register(async function (fastify) {
               responseType: BroadcastTypes.confirmation,
               payload: {
                 message: `Shuffled CardDeck for Player::${payload.playerId}.`,
+              },
+            },
+            payload.tableId,
+          );
+          break;
+
+        case Actions.resetTableDecks:
+          resetAllDecks(payload.tableId);
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `Reset all Table CardDecks.`,
               },
             },
             payload.tableId,

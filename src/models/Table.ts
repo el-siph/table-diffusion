@@ -90,6 +90,17 @@ export default class Table {
     }
   }
 
+  resetAllDecks() {
+    Object.keys(this._players).map((playerId) => {
+      const player = this._players[playerId];
+      player.activeDeck.reset();
+      player.passiveDeck.reset();
+    });
+
+    this._activePile.reset();
+    this._cardDeck = CardDeck.generate();
+  }
+
   get tableId() {
     return this._tableId;
   }
@@ -142,7 +153,7 @@ export default class Table {
 
   assignDeckToPlayer(playerId: string, cards: PlayingCard[]) {
     const player = this._players[playerId];
-    player.setDeck(new CardDeck(cards));
+    player.setActiveDeck(new CardDeck(cards));
     this.updatePlayerById(playerId, player);
   }
 }
