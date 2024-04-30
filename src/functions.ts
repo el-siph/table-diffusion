@@ -308,3 +308,21 @@ export function resetAllDecks(tableId: string) {
     return updateTableById(tableId, table);
   }
 }
+
+/** Records a slap event, either valid or invalid. */
+export function slapDeck(tableId: string, playerId: string, wasValid: boolean) {
+  const table = getTableById(tableId);
+
+  if (table) {
+    table.recordSlap(wasValid, playerId);
+  }
+}
+
+/** Dismisses an active slap event, restoring the state of the Table. */
+export function dismissSlap(tableId: string) {
+  const table = getTableById(tableId);
+
+  if (table) {
+    table.dismissSlap();
+  }
+}

@@ -6,6 +6,12 @@ interface PlayersTable {
   [playerId: string]: Player;
 }
 
+interface SlapEvent {
+  playerId: string | null;
+  wasJustSlapped: boolean;
+  wasValid: boolean;
+}
+
 /**
  * Represents a game room; literally a card table.
  */
@@ -17,6 +23,7 @@ export default class Table {
   private _cardDeck: CardDeck;
   private _activePile: CardDeck;
   private _playerCount: number;
+  private _slapEvent: SlapEvent;
 
   /**
    * @constructor
@@ -36,6 +43,11 @@ export default class Table {
     this._cardDeck = new CardDeck();
     this._activePile = new CardDeck();
     this._playerCount = 0;
+    this._slapEvent = {
+      wasJustSlapped: false,
+      wasValid: false,
+      playerId: null,
+    };
   }
 
   /** Adds a Player to this Table, provided their ID is not taken.
@@ -99,6 +111,22 @@ export default class Table {
 
     this._activePile.reset();
     this._cardDeck = CardDeck.generate();
+  }
+
+  recordSlap(wasValid: boolean, playerId: string) {
+    this._slapEvent = {
+      wasJustSlapped: true,
+      wasValid,
+      playerId,
+    };
+  }
+
+  dismissSlap() {
+    this._slapEvent = {
+      wasJustSlapped: false,
+      wasValid: false,
+      playerId: null,
+    };
   }
 
   get tableId() {

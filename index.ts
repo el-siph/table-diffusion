@@ -4,6 +4,7 @@ import { Actions } from "./src/actions.js";
 import {
   addClientToMap,
   broadcast,
+  dismissSlap,
   divideDeckForTable,
   findOrCreatePlayerIdByName,
   findOrCreateTableIdByCode,
@@ -21,6 +22,7 @@ import {
   resetAllDecks,
   shuffleDeckForTable,
   shufflePlayerDeck,
+  slapDeck,
 } from "./src/functions.js";
 import Table from "./src/models/Table.js";
 import { BroadcastTypes, MessageBody } from "./src/interfaces.js";
@@ -254,6 +256,33 @@ fastify.register(async function (fastify) {
             payload.tableId,
           );
           break;
+
+        case Actions.slapDeck:
+          slapDeck(payload.tableId, payload.playerId, payload.wasValid);
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `Deck slapped ${payload.wasValid ? "validly" : "invalidly"} by Player::${payload.playerId}.`,
+              },
+            },
+            payload.tableId,
+          );
+          break;
+
+        case Actions.dismissSlap:
+          dismissSlap(payload.tableId);
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `Deck slap dismissed.`,
+              },
+            },
+            payload.tableId,
+          );
 
         case Actions.resetTableDecks:
           resetAllDecks(payload.tableId);

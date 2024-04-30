@@ -41,10 +41,17 @@ export const enum Actions {
   divideTableDeck = "divideTableDeck",
 
   /** Records a valid/invalid slap event from a player with the playerId in payload (for Ratscrew).
-   * @requires payload with { tableId, playerId, isSlapValid }
+   * Requires client to determine if slap was valid or invalid.
+   * @requires payload with { tableId, playerId, wasValid }
    * @returns void
    */
   slapDeck = "slapDeck",
+
+  /** Dismiss a slap event (for Ratscrew).
+   * @requires payload with { tableId }
+   * @returns void
+   */
+  dismissSlap = "dismissSlap",
 
   /* Deck-to-Deck interactions */
 
