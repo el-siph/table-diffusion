@@ -4,7 +4,7 @@ import CardDeck from "./CardDeck.js";
 export default class Player {
   private _playerId: string;
   private _playerName: string;
-  private _activeDeck: CardDeck;
+  private _activeDeck: CardDeck; // also used as the Player's "hand"
   private _passiveDeck: CardDeck; // deck not currently in play; becomes the new _activeDeck after the original is exhausted
 
   /**

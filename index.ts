@@ -158,6 +158,8 @@ fastify.register(async function (fastify) {
             payload.playerIdSending,
             payload.playerIdReceiving,
             ptplayerCardCount,
+            payload.isFromPassiveDeck ?? false,
+            payload.isToPassiveDeck ?? false,
           );
           broadcast(
             fastifyServer,
@@ -177,6 +179,7 @@ fastify.register(async function (fastify) {
             payload.tableId,
             payload.playerId,
             playerToTableCount,
+            payload.isFromPassiveDeck ?? false,
           );
 
           broadcast(
@@ -197,6 +200,7 @@ fastify.register(async function (fastify) {
             payload.tableId,
             payload.playerId,
             tableToPlayerCount,
+            payload.isToPassiveDeck ?? false,
           );
           broadcast(
             fastifyServer,
@@ -230,6 +234,7 @@ fastify.register(async function (fastify) {
             payload.tableId,
             payload.playerId,
             payload.cardAttributes,
+            payload.isFromPassiveDeck ?? false,
           );
           broadcast(
             fastifyServer,

@@ -218,11 +218,14 @@ export function popPlayerToPilePicked(
   tableId: string,
   playerId: string,
   cardsAttributes: CardAttribute | CardAttribute[],
+  isFromPassiveDeck = false,
 ) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    const poppedCards = player.activeDeck.popCardsByAttribute(cardsAttributes);
+    const poppedCards = isFromPassiveDeck
+      ? player.passiveDeck.popCardsByAttribute(cardsAttributes)
+      : player.activeDeck.popCardsByAttribute(cardsAttributes);
     table.activePile.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
@@ -234,6 +237,8 @@ export function popPlayerToPlayer(
   playerIdSending: string,
   playerIdReceiving: string,
   cardCount = 1,
+  isFromPassiveDeck = false,
+  isToPassiveDeck = false,
 ) {
   const {
     table,
@@ -242,8 +247,12 @@ export function popPlayerToPlayer(
   } = getTableAndPlayersByIds(tableId, playerIdSending, playerIdReceiving);
 
   if (table && playerSending && playerReceiving) {
-    const poppedCards = playerSending.activeDeck.popCards(cardCount);
-    playerReceiving.activeDeck.pushCards(poppedCards);
+    const poppedCards = isFromPassiveDeck
+      ? playerSending.passiveDeck.popCards(cardCount)
+      : playerSending.activeDeck.popCards(cardCount);
+    isToPassiveDeck
+      ? playerReceiving.passiveDeck.pushCards(poppedCards)
+      : playerReceiving.activeDeck.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
 }
@@ -253,12 +262,15 @@ export function popTableToPlayer(
   tableId: string,
   playerId: string,
   cardCount = 1,
+  isToPassiveDeck = false,
 ) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
     const poppedCards = table.cardDeck.popCards(cardCount);
-    player.activeDeck.pushCards(poppedCards);
+    isToPassiveDeck
+      ? player.passiveDeck.pushCards(poppedCards)
+      : player.activeDeck.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
 }
@@ -268,11 +280,14 @@ export function popPlayerToTable(
   tableId: string,
   playerId: string,
   cardCount = 1,
+  isFromPassiveDeck = false,
 ) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    const poppedCards = player.activeDeck.popCards(cardCount);
+    const poppedCards = isFromPassiveDeck
+      ? player.passiveDeck.popCards(cardCount)
+      : player.activeDeck.popCards(cardCount);
     table.cardDeck.pushCards(poppedCards);
     return updateTableById(tableId, table);
   }
@@ -289,7 +304,7 @@ export function popTableToPile(tableId: string, cardCount = 1) {
   }
 }
 
-/** Shuffles a selected Player's CardDeck. */
+/** Shuffles a selected Player's active CardDeck. */
 export function shufflePlayerDeck(tableId: string, playerId: string) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
