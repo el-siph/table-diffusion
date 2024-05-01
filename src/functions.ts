@@ -315,6 +315,7 @@ export function slapDeck(tableId: string, playerId: string, wasValid: boolean) {
 
   if (table) {
     table.recordSlap(wasValid, playerId);
+    return updateTableById(tableId, table);
   }
 }
 
@@ -324,5 +325,6 @@ export function dismissSlap(tableId: string) {
 
   if (table) {
     table.dismissSlap();
+    return updateTableById(tableId, table);
   }
 }

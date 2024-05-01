@@ -283,6 +283,7 @@ fastify.register(async function (fastify) {
             },
             payload.tableId,
           );
+          break;
 
         case Actions.resetTableDecks:
           resetAllDecks(payload.tableId);
