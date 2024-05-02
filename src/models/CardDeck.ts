@@ -159,4 +159,8 @@ export default class CardDeck {
   reset() {
     this._cards = [];
   }
+
+  get length() {
+    return this._cards.length;
+  }
 }

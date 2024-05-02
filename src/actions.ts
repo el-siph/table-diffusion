@@ -22,8 +22,14 @@ export const enum Actions {
    */
   shuffleTableDeck = "shuffleTableDeck",
 
+  /** Shuffles the activePile for the Table (if present).
+   * @requires payload with { tableId }
+   * @returns void
+   */
+  shuffleTablePile = "shuffleTablePile",
+
   /** Shuffles the CardDeck for the Player with the playerId in payload.
-   * @requires payload with { tableId, playerId }
+   * @requires payload with { tableId, playerId, isPassiveDeck? }
    * @returns void
    */
   shufflePlayerDeck = "shufflePlayerDeck",
@@ -82,10 +88,25 @@ export const enum Actions {
    */
   popPlayerToPlayer = "popPlayerToPlayer",
 
-  /** (Not Implemented) Sends specific PlayingCards from the Player's CardDeck to the Table's activePile (default = 1).
+  /** Sends specific PlayingCards from the Player's CardDeck to the Table's activePile (default = 1).
    * @requires payload with { tableId, playerId, cardAttributes: { pips, suit } | { pips, suit }[], isFromPassiveDeck? }
    */
   popPlayerToPilePicked = "popPlayerToPilePicked",
+
+  /** Sends specific amount of PlayingCards from a Table's activePile to the Player's CardDeck (default = 1).
+   * @requires payload with { tableId, playerId, cardCount?, isFromPassiveDeck? }
+   */
+  popPileToPlayer = "popPileToPlayer",
+
+  /** Sends specific amount of PlayingCards from a Table's activePile to its deck (default = 1).
+   * @requires payload with { tableId, playerId, cardCount? }
+   */
+  popPileToTable = "popPileToTable",
+
+  /** Swaps the passive and active CardDecks for a chosen Player.
+   * @requires payload with { tableId, playerId }
+   */
+  swapPlayersOwnDecks = "swapPlayersOwnDecks",
 
   /* Table endpoints */
 

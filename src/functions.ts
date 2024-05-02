@@ -182,6 +182,17 @@ export function shuffleDeckForTable(tableId: string) {
   }
 }
 
+/** Shuffles the current activePile for an existing Table.
+ * @param tableId
+ */
+export function shufflePileForTable(tableId: string) {
+  const table = getTableById(tableId);
+  if (table) {
+    table.activePile.shuffle();
+    return updateTableById(tableId, table);
+  }
+}
+
 /** Divides the specified Table's CardDeck into equal CardDecks for each Player.
  * @param tableId
  */
@@ -275,6 +286,46 @@ export function popTableToPlayer(
   }
 }
 
+/** Moves a select number of PlayingCards from a specified Player's CardDeck to the Table's activePile. */
+export function popPileToPlayer(
+  tableId: string,
+  playerId: string,
+  cardCount = 1,
+  isToPassiveDeck = false,
+) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    const poppedCards = table.activePile.popCards(cardCount);
+    isToPassiveDeck
+      ? player.passiveDeck.pushCards(poppedCards)
+      : player.activeDeck.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+export function popPileToTable(tableId: string, cardCount = 1) {
+  const table = getTableById(tableId);
+
+  if (table) {
+    const poppedCards = table.activePile.popCards(cardCount);
+    table.cardDeck.pushCards(poppedCards);
+    return updateTableById(tableId, table);
+  }
+}
+
+export function swapPlayersOwnDecks(tableId: string, playerId: string) {
+  const { table, player } = getTableAndPlayersByIds(tableId, playerId);
+
+  if (table && player) {
+    const passiveCards = player.passiveDeck.popCards(player.passiveDeck.length);
+    const activeCards = player.activeDeck.popCards(player.activeDeck.length);
+    player.activeDeck.pushCards(passiveCards);
+    player.passiveDeck.pushCards(activeCards);
+    return updateTableById(tableId, table);
+  }
+}
+
 /** Moves a select number of PlayingCards from a Player's CardDeck to their Table's CardDeck. */
 export function popPlayerToTable(
   tableId: string,
@@ -305,11 +356,15 @@ export function popTableToPile(tableId: string, cardCount = 1) {
 }
 
 /** Shuffles a selected Player's active CardDeck. */
-export function shufflePlayerDeck(tableId: string, playerId: string) {
+export function shufflePlayerDeck(
+  tableId: string,
+  playerId: string,
+  isPassiveDeck: boolean = false,
+) {
   const { table, player } = getTableAndPlayersByIds(tableId, playerId);
 
   if (table && player) {
-    player.activeDeck.shuffle();
+    isPassiveDeck ? player.passiveDeck.shuffle() : player.activeDeck.shuffle();
     return updateTableById(tableId, table);
   }
 }

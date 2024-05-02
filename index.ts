@@ -13,6 +13,8 @@ import {
   getTables,
   initializeTables,
   joinOrCreateTable,
+  popPileToPlayer,
+  popPileToTable,
   popPlayerToPile,
   popPlayerToPilePicked,
   popPlayerToPlayer,
@@ -21,8 +23,10 @@ import {
   popTableToPlayer,
   resetAllDecks,
   shuffleDeckForTable,
+  shufflePileForTable,
   shufflePlayerDeck,
   slapDeck,
+  swapPlayersOwnDecks,
 } from "./src/functions.js";
 import Table from "./src/models/Table.js";
 import { BroadcastTypes, MessageBody } from "./src/interfaces.js";
@@ -110,6 +114,20 @@ fastify.register(async function (fastify) {
 
         case Actions.shuffleTableDeck:
           shuffleDeckForTable(payload.tableId);
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `shuffled deck for Table::${payload.tableId}`,
+              },
+            },
+            payload.tableId,
+          );
+          break;
+
+        case Actions.shuffleTablePile:
+          shufflePileForTable(payload.tableId);
           broadcast(
             fastifyServer,
             {
@@ -214,6 +232,55 @@ fastify.register(async function (fastify) {
           );
           break;
 
+        case Actions.popPileToPlayer:
+          const pileToPlayerCount = payload.cardCount ?? 1;
+          popPileToPlayer(
+            payload.tableId,
+            payload.playerId,
+            pileToPlayerCount,
+            payload.isToPassiveDeck ?? false,
+          );
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `${pileToPlayerCount} card(s) moved from Table::${payload.tableId} to Player::${payload.playerId}`,
+              },
+            },
+            payload.tableId,
+          );
+          break;
+
+        case Actions.popPileToTable:
+          const pileToTableCount = payload.cardCount ?? 1;
+          popPileToTable(payload.tableId, pileToTableCount);
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `${pileToTableCount} card(s) moved from Table::${payload.tableId}'s pile to its deck`,
+              },
+            },
+            payload.tableId,
+          );
+          break;
+
+        case Actions.swapPlayersOwnDecks:
+          swapPlayersOwnDecks(payload.tableId, payload.playerId);
+          broadcast(
+            fastifyServer,
+            {
+              responseType: BroadcastTypes.confirmation,
+              payload: {
+                message: `${payload.playerId}'s' card(s) between their Decks.`,
+              },
+            },
+            payload.tableId,
+          );
+          break;
+
         case Actions.popTableToPile:
           const tableToPileCount = payload.cardCount ?? 1;
           popTableToPile(payload.tableId, tableToPileCount);
@@ -249,7 +316,11 @@ fastify.register(async function (fastify) {
           break;
 
         case Actions.shufflePlayerDeck:
-          shufflePlayerDeck(payload.tableId, payload.playerId);
+          shufflePlayerDeck(
+            payload.tableId,
+            payload.playerId,
+            payload.isPassiveDeck ?? false,
+          );
           broadcast(
             fastifyServer,
             {
