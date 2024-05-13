@@ -437,6 +437,10 @@ fastify.register(async function (fastify) {
   });
 });
 
+fastify.get("/", (req, reply) => {
+  reply.send("Table Diffusions expects WebSocket requests.");
+});
+
 fastify.listen({ port: PORT }, (error) => {
   if (error) {
     console.error(error);
