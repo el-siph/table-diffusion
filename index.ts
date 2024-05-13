@@ -50,8 +50,9 @@ fastify.register(async function (fastify) {
 
   fastifyServer.on("upgrade", (request, socket, head) => {
     const origin = request && request.headers && request.headers.origin;
-    const corsRegex = /^https?:\/\/(.*\.?)abc\.com(:\d+)?\/$/g;
-    if (origin && origin.match(corsRegex) != null) {
+    // const corsRegex = /^https?:\/\/(.*\.?)abc\.com(:\d+)?\/$/g;
+    // if (origin && origin.match(corsRegex) != null) {
+    if (true) {
       fastifyServer.handleUpgrade(request, socket, head, (ws) => {
         fastifyServer.emit("connection", ws, request);
       });
