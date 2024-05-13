@@ -32,6 +32,7 @@ import Table from "./src/models/Table.js";
 import { BroadcastTypes, MessageBody } from "./src/interfaces.js";
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
+const HOST: string = process.env.HOST ?? "0.0.0.0";
 
 const fastify = Fastify({
   logger: true,
@@ -441,7 +442,7 @@ fastify.get("/", (req, reply) => {
   reply.send("Table Diffusions expects WebSocket requests.");
 });
 
-fastify.listen({ port: PORT }, (error) => {
+fastify.listen({ port: PORT, host: HOST }, (error) => {
   if (error) {
     console.error(error);
     process.exit(1);
