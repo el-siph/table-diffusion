@@ -48,7 +48,7 @@ fastify.server.on("upgrade", (request, socket, head) => {
   const origin = request && request.headers && request.headers.origin;
   // const corsRegex = /^https?:\/\/(.*\.?)abc\.com(:\d+)?\/$/g;
   // if (origin && origin.match(corsRegex) != null) {
-  console.log("request", request);
+  console.log("head", head);
   if (true) {
     fastify.websocketServer.handleUpgrade(request, socket, head, (ws) => {
       fastify.websocketServer.emit("connection", ws, request);
