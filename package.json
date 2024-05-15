@@ -16,7 +16,10 @@
   },
   "dependencies": {
     "@fastify/websocket": "^10.0.1",
+    "express": "^4.19.2",
     "fastify": "^4.26.2",
-    "typescript": "^5.4.5"
+    "socket.io": "^4.7.5",
+    "typescript": "^5.4.5",
+    "ws": "^8.17.0"
   }
 }
