@@ -60,7 +60,7 @@ export function emitToTable(
   tableId: string,
   message: BroadcastMessage,
 ) {
-  io.to(tableId).emit(JSON.stringify(message));
+  io.to(tableId).emit("response", JSON.stringify(message));
 }
 
 /** Adds a client to the tableClientMap, for filtered broadcasts */

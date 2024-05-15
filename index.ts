@@ -57,10 +57,8 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("A client connected");
   socket.on("message", ({ action, payload }: MessageBody) => {
-    socket.emit("response", "TEST");
     switch (action) {
       case Actions.joinTable:
-        socket.join(`${payload.tableCode}`);
         const randomTableId = findOrCreateTableIdByCode(payload.tableCode!);
         const { playerId: randomPlayerId, wasFound } =
           findOrCreatePlayerIdByName(randomTableId, payload.playerName!);
@@ -88,6 +86,8 @@ io.on("connection", (socket) => {
             },
           }),
         );
+
+        socket.join(randomTableId);
 
         emitToTable(io, randomTableId, {
           responseType: BroadcastTypes.confirmation,
