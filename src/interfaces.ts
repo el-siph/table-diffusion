@@ -3,7 +3,19 @@ import { Suits } from "./models/PlayingCard.js";
 export interface MessageBody {
   action: string;
   payload: {
-    [key: string]: string;
+    tableId?: string;
+    tableCode?: string;
+    playerId?: string;
+    playerName?: string;
+    isShuffled?: boolean;
+    cardCount?: number;
+    playerIdSending?: string;
+    playerIdReceiving?: string;
+    isFromPassiveDeck?: boolean;
+    isToPassiveDeck?: boolean;
+    cardAttributes?: CardAttribute | CardAttribute[];
+    isPassiveDeck?: boolean;
+    wasValid?: boolean;
   };
 }
 

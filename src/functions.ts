@@ -1,3 +1,4 @@
+import { Server } from "socket.io";
 import { BroadcastMessage, CardAttribute } from "./interfaces.js";
 import CardDeck from "./models/CardDeck.js";
 import Player from "./models/Player.js";
@@ -54,18 +55,12 @@ function getTableAndPlayersByIds(
 }
 
 /** Broadcasts a message to the list of clients in a server */
-export function broadcast(
-  fastifyServer: any,
+export function emitToTable(
+  io: Server,
+  tableId: string,
   message: BroadcastMessage,
-  tableId?: string,
 ) {
-  const clients =
-    tableId && tableClientMap[tableId]
-      ? tableClientMap[tableId]
-      : fastifyServer.clients;
-  for (const client of clients) {
-    client.send(JSON.stringify(message));
-  }
+  io.to(tableId).emit(JSON.stringify(message));
 }
 
 /** Adds a client to the tableClientMap, for filtered broadcasts */
