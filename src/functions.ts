@@ -10,9 +10,6 @@ let tables: { [tableId: string]: Table };
 /** Map of created Tables with `tableCodes`, for easy look-up. */
 let tableCodesIdsMap: { [tableCode: string]: string };
 
-/** Map of clients (Players) at a given table, for broadcasting. */
-let tableClientMap: { [tableId: string]: any[] };
-
 /** Updates a given Table with a tableId.
  * @param tableId
  * @param updatedTable
@@ -63,20 +60,10 @@ export function emitToTable(
   io.to(tableId).emit("response", JSON.stringify(message));
 }
 
-/** Adds a client to the tableClientMap, for filtered broadcasts */
-export function addClientToMap(tableId: string, client: any) {
-  if (!tableClientMap[tableId]) {
-    tableClientMap[tableId] = [];
-  }
-
-  tableClientMap[tableId].push(client);
-}
-
 /** Instantiates a Tables object, usually at server startup. */
 export function initializeTables() {
   tables = {};
   tableCodesIdsMap = {};
-  tableClientMap = {};
 }
 
 /** Gets the current state of the Tables object.

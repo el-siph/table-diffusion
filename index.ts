@@ -1,8 +1,5 @@
-// import fastifyWS from "@fastify/websocket";
-// import Fastify from "fastify";
 import { Actions } from "./src/actions.js";
 import {
-  addClientToMap,
   emitToTable,
   dismissSlap,
   divideDeckForTable,
@@ -35,16 +32,6 @@ const express = require("express");
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
-// const fastify = Fastify({
-//   logger: true,
-// });
-
-// fastify.register(fastifyWS, {
-//   options: {
-//     clientTracking: true,
-//   },
-// });
-//
 const app = express();
 const server = require("https").createServer(app);
 const io = new Server(server, {
@@ -56,6 +43,7 @@ const io = new Server(server, {
 /* Sockets */
 io.on("connection", (socket) => {
   console.log("A client connected");
+
   socket.on("message", ({ action, payload }: MessageBody) => {
     switch (action) {
       case Actions.joinTable:
@@ -71,8 +59,6 @@ io.on("connection", (socket) => {
             payload.playerName!,
           );
         }
-
-        addClientToMap(randomTableId, socket);
 
         socket.emit(
           "response",
