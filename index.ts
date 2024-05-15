@@ -44,19 +44,19 @@ fastify.register(fastifyWS, {
   },
 });
 
-fastify.server.on("upgrade", (request, socket, head) => {
-  const origin = request && request.headers && request.headers.origin;
-  // const corsRegex = /^https?:\/\/(.*\.?)abc\.com(:\d+)?\/$/g;
-  // if (origin && origin.match(corsRegex) != null) {
-  console.log("request", request);
-  if (true) {
-    fastify.websocketServer.handleUpgrade(request, socket, head, (ws) => {
-      socket.emit("connection", ws, request);
-    });
-  } else {
-    socket.destroy();
-  }
-});
+// fastify.server.on("upgrade", (request, socket, head) => {
+//   const origin = request && request.headers && request.headers.origin;
+//   // const corsRegex = /^https?:\/\/(.*\.?)abc\.com(:\d+)?\/$/g;
+//   // if (origin && origin.match(corsRegex) != null) {
+//   console.log("request", request);
+//   if (true) {
+//     fastify.websocketServer.handleUpgrade(request, socket, head, (ws) => {
+//       socket.emit("connection", ws, request);
+//     });
+//   } else {
+//     socket.destroy();
+//   }
+// });
 
 /* Sockets */
 fastify.register(async function (fastify) {
