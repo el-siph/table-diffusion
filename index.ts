@@ -48,10 +48,10 @@ fastify.server.on("upgrade", (request, socket, head) => {
   const origin = request && request.headers && request.headers.origin;
   // const corsRegex = /^https?:\/\/(.*\.?)abc\.com(:\d+)?\/$/g;
   // if (origin && origin.match(corsRegex) != null) {
-  console.log("head", head);
+  console.log("request", request);
   if (true) {
     fastify.websocketServer.handleUpgrade(request, socket, head, (ws) => {
-      fastify.websocketServer.emit("connection", ws, request);
+      socket.emit("connection", ws, request);
     });
   } else {
     socket.destroy();
@@ -441,7 +441,7 @@ fastify.register(async function (fastify) {
 });
 
 fastify.get("/", (req, reply) => {
-  reply.send("Table Diffusions expects WebSocket requests.");
+  reply.send("Table Diffusion expects WebSocket requests.");
 });
 
 fastify.listen({ port: PORT, host: HOST }, (error) => {
