@@ -39,7 +39,7 @@ const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 const server = require("https").createServer(fastify.server);
 const io = new Server(server, {
   cors: {
-    origin: `${process.env.CLIENT_URL}`,
+    origin: `${process.env.CLIENT_URL ?? "*"}`,
   },
 });
 
