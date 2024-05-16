@@ -28,12 +28,15 @@ import {
 import Table from "./src/models/Table.js";
 import { BroadcastTypes, MessageBody } from "./src/interfaces.js";
 import { Server } from "socket.io";
-const express = require("express");
+import Fastify from "fastify";
+
+const fastify = Fastify({
+  logger: true,
+});
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 8080;
 
-const app = express();
-const server = require("https").createServer(app);
+const server = require("https").createServer(fastify.server);
 const io = new Server(server, {
   cors: {
     origin: `${process.env.CLIENT_URL}`,
@@ -322,6 +325,10 @@ io.on("connection", (socket) => {
       console.log("Client left");
     });
   });
+});
+
+fastify.get("/", (req, reply) => {
+  reply.send("Table Diffusion expects WebSocket requests.");
 });
 
 server.listen(PORT, () => {
